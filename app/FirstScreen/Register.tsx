@@ -1,11 +1,10 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Image, useColorScheme, SafeAreaView, ScrollView } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, ScrollView, StyleSheet, Image } from 'react-native';
 import React, { useState } from 'react';
-// For the eye icon, you might want to use an icon library like react-native-vector-icons
-// For simplicity, I'll use a text character here.
-// import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 
 export default function Register() {
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
   const [username, setUsername] = useState('');
@@ -15,245 +14,130 @@ export default function Register() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
-  const containerStyle = isDarkMode ? styles.darkContainer : styles.lightContainer;
-  const textStyle = isDarkMode ? styles.darkText : styles.lightText;
-  const inputStyle = [
-    styles.input,
-    isDarkMode ? styles.darkInput : styles.lightInput,
-    isDarkMode ? styles.darkText : styles.lightText // For input text color
-  ];
-  const placeholderTextColor = isDarkMode ? '#A9A9A9' : '#888888';
+  const placeholderTextColor = isDarkMode ? 'text-gray-400' : 'text-gray-500';
+  const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
+  const buttonBackgroundColor = 'bg-[#FFAA01]';
+  const linkTextColor = isDarkMode ? 'text-orange-400' : 'text-orange-600';
 
+  const inputBorderColor = isDarkMode ? 'border-neutral-600' : 'border-black';
+  const inputBackgroundColor = isDarkMode ? 'bg-neutral-800' : 'bg-white';
+  const shadowClass = 'shadow-md';
+
+  const placeholderTextColorValue = isDarkMode ? '#A9A9A9' : '#A0A0A0';
   return (
-    <SafeAreaView style={[styles.safeArea, containerStyle]}>
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={[styles.container, containerStyle]}>
+    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+      <ScrollView
+        contentContainerClassName="flex-grow justify-center"
+        keyboardShouldPersistTaps="handled"
+        className="px-7 py-5"
+      >
+        <View>
 
-          <View style={styles.header}>
+
+          <View className="flex-row items-center justify-center mb-16 mt-3">
             <Image
-              source={require('../../assets/images/LogoText.png')}
-              style={styles.logo}
+              source={require('../../assets/images/ekraf.png')}
+              className="w-20 h-20 mr-4"
+              resizeMode="contain"
             />
-            <Text style={[styles.title, textStyle, styles.titleText]}>
-              Ekonomi Kreatif Kuningan
-            </Text>
+
+            <View>
+              <Text className={`text-2xl font-bold tracking-wide ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                EKONOMI KREATIF
+              </Text>
+              <Text className={`text-2xl font-bold tracking-wide ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                KUNINGAN
+              </Text>
+            </View>
           </View>
 
-          <Text style={[styles.mainTitle, textStyle]}>Daftar Akun</Text>
-          <Text style={[styles.subtitle, textStyle, styles.subtitleText]}>
-            Silakan buat akun untuk mengakses aplikasi ini
+
+          <Text className={`text-3xl font-bold mb-7 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            Register
           </Text>
 
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, textStyle]}>Username</Text>
+
+          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
+            <Icon name="person-outline" size={22} color={iconColor} className="mr-3" />
             <TextInput
-              style={inputStyle}
-              placeholder="Masukkan username disini"
-              placeholderTextColor={placeholderTextColor}
+              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
+              placeholder="Username"
+              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
               value={username}
               onChangeText={setUsername}
+              autoCapitalize="none"
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, textStyle]}>Email</Text>
+
+          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
+            <Icon name="mail-outline" size={22} color={iconColor} className="mr-3" />
             <TextInput
-              style={inputStyle}
-              placeholder="Masukkan email disini"
-              placeholderTextColor={placeholderTextColor}
+              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
+              placeholder="Email address"
+              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
+              autoCapitalize="none"
             />
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, textStyle]}>Kata Sandi</Text>
-            <View style={styles.passwordInputView}>
-              <TextInput
-                style={[inputStyle, styles.passwordInput]}
-                placeholder="Masukkan kata sandi disini"
-                placeholderTextColor={placeholderTextColor}
-                secureTextEntry={!isPasswordVisible}
-                value={password}
-                onChangeText={setPassword}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-              >
-                <Text style={textStyle}>{isPasswordVisible ? '👁️' : '👁️‍🗨️'}</Text>
-                {/* Or use an Icon: <Icon name={isPasswordVisible ? "eye-off-outline" : "eye-outline"} size={22} color={isDarkMode ? "#FFFFFF" : "#000000"} /> */}
-              </TouchableOpacity>
-            </View>
+
+          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
+            <Icon name="lock-closed-outline" size={22} color={iconColor} className="mr-3" />
+            <TextInput
+              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
+              placeholder="Password"
+              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
+              secureTextEntry={!isPasswordVisible}
+              value={password}
+              onChangeText={setPassword}
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              className="p-2"
+            >
+              <Icon name={isPasswordVisible ? "eye-off-outline" : "eye-outline"} size={24} color={iconColor} />
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, textStyle]}>Konfirmasi Kata Sandi</Text>
-            <View style={styles.passwordInputView}>
-              <TextInput
-                style={[inputStyle, styles.passwordInput]}
-                placeholder="Masukkan kata sandi disini"
-                placeholderTextColor={placeholderTextColor}
-                secureTextEntry={!isConfirmPasswordVisible}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-              />
-              <TouchableOpacity
-                style={styles.eyeIcon}
-                onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
-              >
-                <Text style={textStyle}>{isConfirmPasswordVisible ? '👁️' : '👁️‍🗨️'}</Text>
-                {/* Or use an Icon: <Icon name={isConfirmPasswordVisible ? "eye-off-outline" : "eye-outline"} size={22} color={isDarkMode ? "#FFFFFF" : "#000000"} /> */}
-              </TouchableOpacity>
-            </View>
+
+          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-6 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
+            <Icon name="lock-closed-outline" size={22} color={iconColor} className="mr-3" />
+            <TextInput
+              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
+              placeholder="Confirm password"
+              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
+              secureTextEntry={!isConfirmPasswordVisible}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              autoCapitalize="none"
+            />
+            <TouchableOpacity
+              onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+              className="p-2"
+            >
+              <Icon name={isConfirmPasswordVisible ? "eye-off-outline" : "eye-outline"} size={24} color={iconColor} />
+            </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Selanjutnya</Text>
+
+          <TouchableOpacity className={`${buttonBackgroundColor} py-4 rounded-xl items-center mt-5 mb-6 shadow-md`}>
+            <Text className="text-white text-lg font-bold">Create Account</Text>
           </TouchableOpacity>
 
-          <View style={styles.loginRedirect}>
-            <Text style={[styles.loginText, textStyle]}>Sudah punya akun? </Text>
+
+          <View className="flex-row justify-center items-center mt-4">
+            <Text className={`text-lg font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Already have an account? </Text>
             <TouchableOpacity onPress={() => console.log('Navigate to Login')}>
-              <Text style={[styles.loginLink, isDarkMode ? styles.darkLink : styles.lightLink]}>Masuk</Text>
+              <Text className={`text-lg font-bold ${linkTextColor}`}>Sign In</Text>
             </TouchableOpacity>
           </View>
 
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  scrollViewContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 30,
-    justifyContent: 'center',
-    paddingVertical: 20, // Added padding for scroll view
-  },
-  lightContainer: {
-    backgroundColor: '#FFFFFF',
-  },
-  darkContainer: {
-    backgroundColor: '#121212', // A slightly off-black for dark mode
-  },
-  header: {
-    flexDirection: 'column', // Changed to column for better alignment of logo and text
-    alignItems: 'center',
-    marginBottom: 30, // Increased margin
-  },
-  logo: {
-    width: 249, // Adjusted size
-    height: 72, // Adjusted size
-    resizeMode: 'contain',
-    marginBottom: 10, // Space between logo and title text
-  },
-  titleText: {
-    fontSize: 22, // Adjusted size
-    fontFamily: 'Poppins-Bold', // Assuming you have this font
-    textAlign: 'center',
-  },
-  mainTitle: {
-    fontSize: 28, // Larger title
-    fontFamily: 'Poppins-ExtraBold', // Assuming you have this font
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular', // Assuming you have this font
-    textAlign: 'center',
-    marginBottom: 30, // Space before form
-    color: '#666666',
-  },
-  subtitleText: {
-     lineHeight: 20,
-  },
-  inputContainer: {
-    marginBottom: 15,
-  },
-  label: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium', // Assuming you have this font
-    marginBottom: 8,
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-  },
-  lightInput: {
-    borderColor: '#D0D0D0',
-    backgroundColor: '#F9F9F9',
-    color: '#000000',
-  },
-  darkInput: {
-    borderColor: '#555555',
-    backgroundColor: '#333333',
-    color: '#FFFFFF',
-  },
-  passwordInputView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  passwordInput: {
-    flex: 1,
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 15,
-    padding: 5,
-  },
-  button: {
-    backgroundColor: '#FFA500', // Orange color from image
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20, // Space above button
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold', // Assuming you have this font
-  },
-  loginRedirect: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  loginText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Regular',
-  },
-  loginLink: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Bold', // Assuming you have this font
-  },
-  lightLink: {
-    color: '#FFA500', // Orange color
-  },
-  darkLink: {
-    color: '#FFC107', // A lighter orange for dark mode
-  },
-  lightText: {
-    color: '#000000',
-  },
-  darkText: {
-    color: '#FFFFFF',
-  },
-});

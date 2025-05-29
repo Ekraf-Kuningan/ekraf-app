@@ -7,7 +7,7 @@ import OnBoarding from './app/FirstScreen/OnBoarding';
 import Login from './app/FirstScreen/Login';
 import Register from './app/FirstScreen/Register';
 import {  } from 'react-native';
-
+import "./global.css";
 
 const Stack = createNativeStackNavigator();
 

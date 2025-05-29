@@ -1,0 +1,30 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  // NOTE: Update this to include the paths to all of your component files.
+  content: [
+    "./App.{js,jsx,ts,tsx}", // Untuk file App utama Anda
+    "./app/**/*.{js,jsx,ts,tsx}", // Untuk semua file JS/JSX/TS/TSX di dalam folder 'app' dan subfoldernya
+    "./components/**/*.{js,jsx,ts,tsx}", // Untuk semua file JS/JSX/TS/TSX di dalam folder 'components' dan subfoldernya
+    // Jika Anda memiliki file atau folder lain yang berisi komponen dengan className, tambahkan juga di sini
+    // Misalnya, jika ada komponen langsung di root: "./*.{js,jsx,ts,tsx}" (tapi ini mungkin terlalu luas)
+    // Atau jika ada folder lain, misal "./src/**/*.{js,jsx,ts,tsx}"
+  ],
+  presets: [require("nativewind/preset")],
+  theme: {
+    extend: {
+      // Jika Anda menggunakan font kustom seperti 'font-poppins-bold'
+      // Anda perlu mendefinisikannya di sini
+      fontFamily: {
+        'poppins-regular': ['Poppins-Regular'], // Nama file font sebenarnya
+        'poppins-medium': ['Poppins-Medium'],
+        'poppins-bold': ['Poppins-Bold'],
+        'poppins-extrabold': ['Poppins-ExtraBold'],
+      },
+      colors: {
+        'custom-orange': '#FF8C00', // Contoh warna kustom
+        'custom-orange-dark': '#FFA500', // Contoh warna kustom
+      }
+    },
+  },
+  plugins: [],
+};
