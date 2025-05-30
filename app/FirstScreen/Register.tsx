@@ -2,7 +2,7 @@ import { Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, 
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-export default function Register() {
+export default function Register({ navigation }: { navigation: any }) {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
@@ -15,7 +15,7 @@ export default function Register() {
 
   const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
   const buttonBackgroundColor = 'bg-[#FFAA01]';
-  const linkTextColor = isDarkMode ? 'text-orange-400' : 'text-orange-500';
+  const linkTextColor = isDarkMode ? 'text-[#FFAA01]' : 'text-[#FFAA01]';
 
   const placeholderTextColorValue = isDarkMode ? '#A9A9A9' : '#A0A0A0';
 
@@ -119,9 +119,9 @@ export default function Register() {
           </TouchableOpacity>
 
           <View className="flex-row justify-center items-center mt-4">
-            <Text className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Sudah punya akun? </Text>
-            <TouchableOpacity onPress={() => console.log('Navigate to Login')}>
-              <Text className={`text-sm font-semibold ${linkTextColor}`}>Masuk</Text>
+            <Text className={`text-lg font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Sudah punya akun? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text className={`text-lg font-semibold ${linkTextColor}`}>Masuk</Text>
             </TouchableOpacity>
           </View>
 

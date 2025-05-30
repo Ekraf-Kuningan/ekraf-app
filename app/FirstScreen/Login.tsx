@@ -1,249 +1,219 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, StatusBar, useColorScheme } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; 
-import { colors } from '../../constants/colors';
-import MaskedView from '@react-native-masked-view/masked-view';// Pastikan path ini sesuai dengan struktur folder Anda
-import { LinearGradient } from 'react-native-linear-gradient'; // Pastikan Anda telah menginstal react-native-linear-gradient
+import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, StatusBar, useColorScheme, Platform } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const primaryColor = '#FFAA01';
+const lightTextColor = '#000000';
+const lightSubTextColor = '#6B7280';
+const lightPlaceholderColor = '#9CA3AF';
+const lightBorderColor = '#D1D5DB';
+
+const darkTextColor = '#FFFFFF';
+const darkSubTextColor = '#A0A0A0';
+const darkPlaceholderColor = '#777777';
+const darkBorderColor = '#555555';
+
 export default function Login({ navigation }: { navigation: any }) {
-  const colorScheme = useColorScheme(); 
+  const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
-  const [passwordVisible, setPasswordVisible] = useState(false); 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const currentTextColor = isDarkMode ? darkTextColor : lightTextColor;
+  const currentSubTextColor = isDarkMode ? darkSubTextColor : lightSubTextColor;
+  const currentPlaceholderColor = isDarkMode ? darkPlaceholderColor : lightPlaceholderColor;
+  const currentBorderColor = isDarkMode ? darkBorderColor : lightBorderColor;
+  const currentInputBackgroundColor = isDarkMode ? '#1E1E1E' : '#FFFFFF';
+  const currentBackgroundColor = isDarkMode ? '#121212' : '#FFFFFF';
+  const linkTextColor = isDarkMode ? 'text-[#FFAA01]' : 'text-[#FFAA01]';
+
 
   return (
-    <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
-      {/* Status Bar */}
+    <View style={[styles.container, { backgroundColor: currentBackgroundColor }]}>
       <StatusBar
-        backgroundColor={isDarkMode ? '#000000' : '#FFFFFF'}
+        backgroundColor={currentBackgroundColor}
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
       />
 
-      {/* Logo and Title */}
-      <View style={styles.header}>
-        <Image
-          source={require('../../assets/images/ekraf_2.png')} 
-          style={styles.logo}
-        />
-        <View>
-          <GradientColor text ='Ekonomi Kreatif'/>
-          <GradientColor text ='Kuningan' />
-        </View>
+      <View style={styles.headerContainer}>
+           <Image
+                    source={require('../../assets/images/LogoText.png')}
+                    className="w-72 h-249 mb-3"
+                    resizeMode="contain"
+                  />
       </View>
 
-      {/* Welcome Text */}
       <View style={styles.welcomeContainer}>
-        <Text style={[styles.welcomeText, isDarkMode ? styles.darkText : styles.lightText]}>Hallo, Selamat datang</Text>
-        <Text style={[styles.subText, isDarkMode ? styles.darkSubText : styles.lightSubText]}>
-          Silahkan login untuk mengakses aplikasi ini
+        <Text style={[styles.welcomeTitle, { color: currentTextColor }]}>Selamat Datang</Text>
+        <Text style={[styles.welcomeSubtitle, { color: currentSubTextColor }]}>
+          Mohon isi email dan kata sandi untuk melanjutkan
         </Text>
       </View>
 
-      {/* Login Form */}
-      <View style={styles.form}>
-        <Text style={[styles.label, isDarkMode ? styles.darkText : styles.lightText]}>Login</Text>
-
-        {/* Email Input */}
-        <View style={[styles.inputContainer, isDarkMode ? styles.darkInputContainer : styles.lightInputContainer]}>
-        <Icon name="envelope-o" size={20} color={isDarkMode ? '#AAAAAA' : '#CCCCCC'} style={styles.icon} />
+      <View style={styles.formContainer}>
+        <Text style={[styles.label, { color: currentTextColor }]}>Email</Text>
+        <View style={[styles.inputWrapper, { borderColor: currentBorderColor, backgroundColor: currentInputBackgroundColor }]}>
           <TextInput
-            style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-            placeholder="Email address"
-            placeholderTextColor={isDarkMode ? '#AAAAAA' : '#CCCCCC'}
+            style={[styles.input, { color: currentTextColor }]}
+            placeholder="Masukkan email disini"
+            placeholderTextColor={currentPlaceholderColor}
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
           />
         </View>
 
-        {/* Password Input */}
-        <View style={[styles.inputContainer, isDarkMode ? styles.darkInputContainer : styles.lightInputContainer]}>
-          <Icon name="lock" size={22} color={isDarkMode ? '#AAAAAA' : '#CCCCCC'} style={styles.icon} />
+        <Text style={[styles.label, { color: currentTextColor }]}>Kata Sandi</Text>
+        <View style={[styles.inputWrapper, { borderColor: currentBorderColor, backgroundColor: currentInputBackgroundColor }]}>
           <TextInput
-            style={[styles.input, isDarkMode ? styles.darkInput : styles.lightInput]}
-            placeholder="Password"
-            placeholderTextColor={isDarkMode ? '#AAAAAA' : '#CCCCCC'}
-            secureTextEntry={!passwordVisible} // Kontrol visibilitas password
+            style={[styles.input, { color: currentTextColor }]}
+            placeholder="Masukkan kata sandi disini"
+            placeholderTextColor={currentPlaceholderColor}
+            secureTextEntry={!passwordVisible}
+            value={password}
+            onChangeText={setPassword}
+            autoCapitalize="none"
           />
-          <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+          <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={styles.eyeIcon}>
             <Icon
-              name={passwordVisible ? 'eyes' : 'eyes-slash'}
+              name={passwordVisible ? 'eye' : 'eye-slash'}
               size={20}
-              color={isDarkMode ? '#AAAAAA' : '#CCCCCC'}
-              style={styles.icon}
+              color={currentPlaceholderColor}
             />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity>
-          <Text style={[styles.forgotPassword, isDarkMode ? styles.darkLink : styles.lightLink]}>Forgot Password?</Text>
+        <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => console.log('Lupa Kata Sandi? ditekan')}>
+          <Text style={[styles.forgotPasswordText, { color: primaryColor }]}>Lupa Kata Sandi?</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Login Button */}
-      <TouchableOpacity style={[styles.loginButton, isDarkMode ? styles.darkButton : styles.lightButton]}>
-        <Text style={styles.loginButtonText}>Login</Text>
+      <TouchableOpacity style={[styles.loginButton, { backgroundColor: primaryColor }]}>
+        <Text style={styles.loginButtonText}>Masuk</Text>
       </TouchableOpacity>
 
-      {/* Register Link */}
       <View style={styles.registerContainer}>
-        <Text style={[styles.registerText, isDarkMode ? styles.darkSubText : styles.lightSubText]}>
-          Don't have an account?{' '}
+        <Text className={`text-lg font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+          Tidak punya akun?{' '}
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text style={[styles.registerLink, isDarkMode ? styles.darkLink : styles.lightLink]}>Register</Text>
+          <Text className={`text-lg font-semibold ${linkTextColor}`} >Daftar</Text>
         </TouchableOpacity>
       </View>
     </View>
-  );
-}
-type GradientColorProps = {
-  text: string;
-};
-
-const GradientColor = ({ text }: GradientColorProps) => {
-   const colorScheme = useColorScheme(); 
-  const isDarkMode = colorScheme === 'dark';
-  return (
-    <MaskedView maskElement={<Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>{text}</Text>}>
-      <LinearGradient
-        colors={['#FFAA01', '#1F6361']} 
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}>
-        <Text style={{ textAlign: 'center', fontFamily:'Poppins-SemiBold', fontSize:23 }}>{text}</Text>
-      </LinearGradient>
-    </MaskedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: '100%',
-    paddingHorizontal: 30,
+    paddingHorizontal: 25,
     justifyContent: 'center',
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  lightContainer: {
-    backgroundColor: '#FFFFFF',
-  },
-  darkContainer: {
-    backgroundColor: '#000000',
-  },
-  header: {
+  headerContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
     alignItems: 'center',
-    bottom: 60,
+    justifyContent: 'center',
+    marginBottom: 30,
+    marginTop: 20,
   },
   logo: {
-    width: 122,
-    height: 122,
+    width: 80,
+    height: 80,
     resizeMode: 'contain',
+    marginRight: 15,
   },
-  title: {
-    fontSize: 20,
-    fontFamily: 'Poppins-SemiBold',
-    marginLeft: 10,
-    marginTop: 12,
+  titleContainer: {
   },
-  lightText: {
-    color: '#000000',
-  },
-  darkText: {
-    color: '#FFFFFF',
+  titleText: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 22,
+    lineHeight: 28,
   },
   welcomeContainer: {
-    marginBottom: 20,
+    alignItems: 'flex-start',
+    marginBottom: 30,
+    width: '100%',
   },
-  welcomeText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
+  welcomeTitle: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 28,
+    marginBottom: 8,
     textAlign: 'left',
   },
-  subText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 12,
+  welcomeSubtitle: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
     textAlign: 'left',
-    marginTop: 5,
+    lineHeight: 20,
   },
-  lightSubText: {
-    color: '#666666',
-  },
-  darkSubText: {
-    color: '#AAAAAA',
-  },
-  form: {
+  formContainer: {
+    width: '100%',
     marginBottom: 20,
   },
   label: {
-    fontSize: 18,
-    fontFamily: 'Poppins-SemiBold',
-    marginBottom: 10,
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    marginBottom: 8,
+    textAlign: 'left',
   },
-  inputContainer: {
-    height: 50,
+  inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    marginBottom: 10,
-  },
-  lightInputContainer: {
-    borderColor: '#CCCCCC',
-  },
-  darkInputContainer: {
-    borderColor: '#444444',
+    borderRadius: 8,
+    marginBottom: 15,
+    height: 50,
   },
   input: {
     flex: 1,
+    paddingHorizontal: 15,
     fontSize: 14,
-    paddingVertical: 10,
+    fontFamily: 'Poppins-Regular',
   },
-  lightInput: {
-    color: '#000000',
+  eyeIcon: {
+    padding: 10,
   },
-  darkInput: {
-    color: '#FFFFFF',
+  forgotPasswordContainer: {
+    alignSelf: 'flex-end',
+    marginTop: -5,
+    marginBottom: 20,
   },
-  icon: {
-    marginRight: 12,
-  },
-  forgotPassword: {
+  forgotPasswordText: {
     fontFamily: 'Poppins-Medium',
-    fontSize: 14,
-    textAlign: 'right',
-    marginTop: 5,
-  },
-  lightLink: {
-    color: '#FFAA01',
-  },
-  darkLink: {
-    color: '#FFAA01',
+    fontSize: 13,
   },
   loginButton: {
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  lightButton: {
-    backgroundColor: '#FFAA01',
-  },
-  darkButton: {
-    backgroundColor: '#FFAA01',
+    justifyContent: 'center',
+    width: '100%',
+    marginBottom: 30,
+    height: 50,
   },
   loginButtonText: {
     fontFamily: 'Poppins-SemiBold',
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 16,
   },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 20,
   },
   registerText: {
-    fontFamily: 'Poppins-Light',
+    fontFamily: 'Poppins-Regular',
     fontSize: 14,
   },
   registerLink: {
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Poppins-SemiBold',
     fontSize: 14,
+    marginLeft: 5,
   },
 });
