@@ -1,10 +1,9 @@
-import { Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, ScrollView, StyleSheet, Image } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, ScrollView, Image } from 'react-native';
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-
 export default function Register() {
-  const { colorScheme } = useColorScheme();
+  const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
   const [username, setUsername] = useState('');
@@ -14,68 +13,62 @@ export default function Register() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
-  const placeholderTextColor = isDarkMode ? 'text-gray-400' : 'text-gray-500';
   const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
   const buttonBackgroundColor = 'bg-[#FFAA01]';
-  const linkTextColor = isDarkMode ? 'text-orange-400' : 'text-orange-600';
-
-  const inputBorderColor = isDarkMode ? 'border-neutral-600' : 'border-black';
-  const inputBackgroundColor = isDarkMode ? 'bg-neutral-800' : 'bg-white';
-  const shadowClass = 'shadow-md';
+  const linkTextColor = isDarkMode ? 'text-orange-400' : 'text-orange-500';
 
   const placeholderTextColorValue = isDarkMode ? '#A9A9A9' : '#A0A0A0';
+
+  const inputBorderColor = isDarkMode ? 'border-neutral-600' : 'border-gray-400';
+  const inputBackgroundColor = isDarkMode ? 'bg-neutral-800' : 'bg-white';
+  const textColor = isDarkMode ? 'text-white' : 'text-black';
+  const labelColor = isDarkMode ? 'text-gray-200' : 'text-gray-700';
+  const subtitleColor = isDarkMode ? 'text-gray-300' : 'text-gray-600';
+  const subtleBackgroundColor = isDarkMode ? 'bg-neutral-900' : 'bg-white';
+
+
   return (
-    <SafeAreaView className={`flex-1 ${isDarkMode ? 'bg-neutral-900' : 'bg-white'}`}>
+    <SafeAreaView className={`flex-1 ${subtleBackgroundColor}`}>
       <ScrollView
-        contentContainerClassName="flex-grow justify-center"
+        contentContainerClassName="flex-grow"
         keyboardShouldPersistTaps="handled"
-        className="px-7 py-5"
+        className="px-6 pt-5 pb-8"
       >
-        <View>
+        <View className="pt-24">
 
-
-          <View className="flex-row items-center justify-center mb-16 mt-3">
+          <View className="items-center mt-6 mb-2">
             <Image
-              source={require('../../assets/images/ekraf.png')}
-              className="w-20 h-20 mr-4"
+              source={require('../../assets/images/LogoText.png')}
+              className="w-72 h-249 mb-3"
               resizeMode="contain"
             />
-
-            <View>
-              <Text className={`text-2xl font-bold tracking-wide ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                EKONOMI KREATIF
-              </Text>
-              <Text className={`text-2xl font-bold tracking-wide ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                KUNINGAN
-              </Text>
-            </View>
           </View>
 
-
-          <Text className={`text-3xl font-bold mb-7 ${isDarkMode ? 'text-white' : 'text-black'}`}>
-            Register
+          <Text className={`text-3xl font-bold mb-2 text-center ${textColor}`}>
+            Daftar Akun
+          </Text>
+          <Text className={`text-base text-center mb-8 ${subtitleColor}`}>
+            Silakan buat akun untuk mengakses aplikasi ini
           </Text>
 
-
-          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
-            <Icon name="person-outline" size={22} color={iconColor} className="mr-3" />
+          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Username</Text>
+          <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <TextInput
-              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
-              placeholder="Username"
-              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
+              className={`flex-1 text-base ${textColor}`}
+              placeholder="Masukkan username disini"
+              placeholderTextColor={placeholderTextColorValue}
               value={username}
               onChangeText={setUsername}
               autoCapitalize="none"
             />
           </View>
 
-
-          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
-            <Icon name="mail-outline" size={22} color={iconColor} className="mr-3" />
+          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Email</Text>
+          <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <TextInput
-              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
-              placeholder="Email address"
-              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
+              className={`flex-1 text-base ${textColor}`}
+              placeholder="Masukkan email disini"
+              placeholderTextColor={placeholderTextColorValue}
               keyboardType="email-address"
               value={email}
               onChangeText={setEmail}
@@ -83,13 +76,12 @@ export default function Register() {
             />
           </View>
 
-
-          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
-            <Icon name="lock-closed-outline" size={22} color={iconColor} className="mr-3" />
+          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Kata Sandi</Text>
+          <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <TextInput
-              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
-              placeholder="Password"
-              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
+              className={`flex-1 text-base ${textColor}`}
+              placeholder="Masukkan kata sandi disini"
+              placeholderTextColor={placeholderTextColorValue}
               secureTextEntry={!isPasswordVisible}
               value={password}
               onChangeText={setPassword}
@@ -103,13 +95,12 @@ export default function Register() {
             </TouchableOpacity>
           </View>
 
-
-          <View className={`flex-row items-center border-2 rounded-xl px-4 h-14 mb-6 ${inputBorderColor} ${inputBackgroundColor} ${shadowClass}`}>
-            <Icon name="lock-closed-outline" size={22} color={iconColor} className="mr-3" />
+          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Konfirmasi Kata Sandi</Text>
+          <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor}`}>
             <TextInput
-              className={`flex-1 text-base ${isDarkMode ? 'text-white' : 'text-black'}`}
-              placeholder="Confirm password"
-              placeholderTextColor={isDarkMode ? '#A9A9A9' : '#A0A0A0'}
+              className={`flex-1 text-base ${textColor}`}
+              placeholder="Masukkan kata sandi disini"
+              placeholderTextColor={placeholderTextColorValue}
               secureTextEntry={!isConfirmPasswordVisible}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -123,16 +114,14 @@ export default function Register() {
             </TouchableOpacity>
           </View>
 
-
-          <TouchableOpacity className={`${buttonBackgroundColor} py-4 rounded-xl items-center mt-5 mb-6 shadow-md`}>
-            <Text className="text-white text-lg font-bold">Create Account</Text>
+          <TouchableOpacity className={`${buttonBackgroundColor} py-4 rounded-lg items-center mt-5 mb-6`}>
+            <Text className="text-white text-lg font-semibold">Selanjutnya</Text>
           </TouchableOpacity>
 
-
           <View className="flex-row justify-center items-center mt-4">
-            <Text className={`text-lg font-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Already have an account? </Text>
+            <Text className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Sudah punya akun? </Text>
             <TouchableOpacity onPress={() => console.log('Navigate to Login')}>
-              <Text className={`text-lg font-bold ${linkTextColor}`}>Sign In</Text>
+              <Text className={`text-sm font-semibold ${linkTextColor}`}>Masuk</Text>
             </TouchableOpacity>
           </View>
 
