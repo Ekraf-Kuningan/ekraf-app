@@ -21,6 +21,7 @@ module.exports = {
         'poppins-extrabold': ['Poppins-ExtraBold'],
       },
       colors: {
+        'primary': '#FFAA01', // Warna utama
         'custom-orange': '#FFAA01', // Contoh warna kustom
         'custom-orange-dark': '#FFAA01', // Contoh warna kustom
       }
