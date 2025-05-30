@@ -9,7 +9,7 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace('OnBoarding'); // Navigasi ke OnBoarding setelah 3 detik
+      navigation.replace('Login'); // Navigasi ke OnBoarding setelah 3 detik
     }, 3000);
 
     return () => clearTimeout(timer); // Bersihkan timer saat komponen unmount

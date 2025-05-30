@@ -11,7 +11,7 @@ import "./global.css";
 
 const Stack = createNativeStackNavigator();
 
-export default function App2() {
+export default function App() {
   return (
    <NavigationContainer>
         <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{headerShown: false,animation: 'fade'}}>
