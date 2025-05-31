@@ -83,7 +83,7 @@ const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
           />
           <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={styles.eyeIcon}>
             <Icon
-              name={passwordVisible ? 'eye' : 'eye-slash'}
+              name={passwordVisible ? "eye-off-outline" : "eye-outline"}
               size={20}
               color={currentPlaceholderColor}
             />
