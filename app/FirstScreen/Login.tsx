@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, StatusBar, useColorScheme, Platform } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const primaryColor = '#FFAA01';
 const lightTextColor = '#000000';
@@ -20,6 +20,8 @@ export default function Login({ navigation }: { navigation: any }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
+
 
   const currentTextColor = isDarkMode ? darkTextColor : lightTextColor;
   const currentSubTextColor = isDarkMode ? darkSubTextColor : lightSubTextColor;
@@ -55,6 +57,7 @@ export default function Login({ navigation }: { navigation: any }) {
       <View style={styles.formContainer}>
         <Text style={[styles.label, { color: currentTextColor }]}>Email</Text>
         <View style={[styles.inputWrapper, { borderColor: currentBorderColor, backgroundColor: currentInputBackgroundColor }]}>
+          <Icon name="mail-outline" size={24} color={iconColor} className='p-2' />
           <TextInput
             style={[styles.input, { color: currentTextColor }]}
             placeholder="Masukkan email disini"
@@ -68,6 +71,7 @@ export default function Login({ navigation }: { navigation: any }) {
 
         <Text style={[styles.label, { color: currentTextColor }]}>Kata Sandi</Text>
         <View style={[styles.inputWrapper, { borderColor: currentBorderColor, backgroundColor: currentInputBackgroundColor }]}>
+          <Icon name="lock-closed-outline" size={24} color={iconColor} className='p-2' />
           <TextInput
             style={[styles.input, { color: currentTextColor }]}
             placeholder="Masukkan kata sandi disini"
@@ -140,7 +144,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   welcomeTitle: {
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-SemiBold',
     fontSize: 28,
     marginBottom: 8,
     textAlign: 'left',

@@ -53,6 +53,7 @@ export default function Register({ navigation }: { navigation: any }) {
 
           <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Username</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
+            <Icon name='person-outline' color={iconColor} size={24} className='ml-0'/>            
             <TextInput
               className={`flex-1 text-base ${textColor}`}
               placeholder="Masukkan username disini"
@@ -65,8 +66,9 @@ export default function Register({ navigation }: { navigation: any }) {
 
           <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Email</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
+            <Icon name='mail-outline' color={iconColor} size={24} className='ml-0'/>
             <TextInput
-              className={`flex-1 text-base ${textColor}`}
+              className={`flex-1 ml-1 text-base ${textColor}`}
               placeholder="Masukkan email disini"
               placeholderTextColor={placeholderTextColorValue}
               keyboardType="email-address"
@@ -78,8 +80,9 @@ export default function Register({ navigation }: { navigation: any }) {
 
           <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Kata Sandi</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
+            <Icon name='lock-closed-outline' color={iconColor} size={24} className='ml-0'/>
             <TextInput
-              className={`flex-1 text-base ${textColor}`}
+              className={`flex-1 ml-1 text-base ${textColor}`}
               placeholder="Masukkan kata sandi disini"
               placeholderTextColor={placeholderTextColorValue}
               secureTextEntry={!isPasswordVisible}
@@ -97,6 +100,7 @@ export default function Register({ navigation }: { navigation: any }) {
 
           <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Konfirmasi Kata Sandi</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor}`}>
+            <Icon name='lock-closed-outline' color={iconColor} size={24} className='ml-0'/>
             <TextInput
               className={`flex-1 text-base ${textColor}`}
               placeholder="Masukkan kata sandi disini"

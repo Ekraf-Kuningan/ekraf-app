@@ -17,7 +17,7 @@ module.exports = {
       fontFamily: {
         'poppins-regular': ['Poppins-Regular'], // Nama file font sebenarnya
         'poppins-medium': ['Poppins-Medium'],
-        'poppins-bold': ['Poppins-Bold'],
+        'poppins-bold': ['Poppins-SemiBold'],
         'poppins-extrabold': ['Poppins-ExtraBold'],
       },
       colors: {
