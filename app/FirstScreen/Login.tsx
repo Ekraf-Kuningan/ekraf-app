@@ -90,7 +90,7 @@ const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => console.log('Lupa Kata Sandi? ditekan')}>
+        <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => navigation.navigate('ResetPassword')}>
           <Text style={[styles.forgotPasswordText, { color: primaryColor }]}>Lupa Kata Sandi?</Text>
         </TouchableOpacity>
       </View>
