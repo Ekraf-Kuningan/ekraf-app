@@ -1,4 +1,4 @@
-name: Auto Increment Release Android AAB and APK
+name: Auto Increment Release Android AAB and APK (npm)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_and_auto_release_android:
-    name: Build Android AAB & APK and Auto Increment Release
+    name: Build Android AAB & APK and Auto Increment Release (npm)
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -46,10 +46,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'yarn'
+          cache: 'npm' # Diubah ke npm
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci # Diubah ke npm ci
 
       - name: Setup Java
         uses: actions/setup-java@v4
