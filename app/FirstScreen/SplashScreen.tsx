@@ -10,7 +10,7 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.replace('Login'); // Navigasi ke OnBoarding setelah 3 detik
-    }, 3000);
+    }, 2000);
 
     return () => clearTimeout(timer); // Bersihkan timer saat komponen unmount
   }, [navigation]);
@@ -29,8 +29,11 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
           source={require('../../assets/images/ekraf.png')} // Path yang benar
           style={styles.logo}
         />
-        <Text style={[styles.logoText, isDarkMode ? styles.darkText : styles.lightText]}>.Ekraf</Text>
-        <GradientColor text="Ekonomi Kreatif Kuningan" />
+          <Image
+                            source={require('../../assets/images/SplashText.png')}
+                            className="w-45 h-155 mb-3"
+                            resizeMode="contain"
+                          />
       </View>
 
       {/* Footer Section */}
