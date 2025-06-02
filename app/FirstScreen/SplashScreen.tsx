@@ -1,51 +1,100 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Image, useColorScheme, StatusBar } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, Image, useColorScheme, StatusBar, Animated } from 'react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
 import {LinearGradient} from 'react-native-linear-gradient';
 import { colors } from '../../constants/colors';
+
 export default function SplashScreen({ navigation }: { navigation: any }) {
-  const colorScheme = useColorScheme(); // Deteksi mode gelap atau terang
+  const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.replace('Login'); // Navigasi ke OnBoarding setelah 3 detik
-    }, 2000);
+  const iconFadeAnim = useRef(new Animated.Value(0)).current;
+  const iconScaleAnim = useRef(new Animated.Value(0.5)).current;
 
-    return () => clearTimeout(timer); // Bersihkan timer saat komponen unmount
-  }, [navigation]);
+  const textFadeAnim = useRef(new Animated.Value(0)).current;
+  const textTranslateYAnim = useRef(new Animated.Value(20)).current;
+
+  useEffect(() => {
+    Animated.sequence([
+      Animated.parallel([
+        Animated.timing(iconFadeAnim, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        }),
+        Animated.spring(iconScaleAnim, {
+          toValue: 1,
+          friction: 3,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(textFadeAnim, {
+          toValue: 1,
+          duration: 700,
+          delay: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(textTranslateYAnim, {
+          toValue: 0,
+          duration: 700,
+          delay: 200,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+
+    const totalAnimationDuration = 800 + 700 + 200;
+    const timer = setTimeout(() => {
+      navigation.replace('Login');
+    }, totalAnimationDuration + 500);
+
+    return () => clearTimeout(timer);
+  }, [navigation, iconFadeAnim, iconScaleAnim, textFadeAnim, textTranslateYAnim]);
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
-      {/* Status Bar */}
       <StatusBar
         backgroundColor={isDarkMode ? '#000000' : '#FFFFFF'}
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
       />
 
-      {/* Logo Section */}
-      <View style={styles.logoContainer}>
+      <Animated.View
+        style={[
+          styles.logoContainer,
+          {
+            opacity: iconFadeAnim,
+            transform: [{ scale: iconScaleAnim }],
+          },
+        ]}
+      >
         <Image
-          source={require('../../assets/images/ekraf.png')} // Path yang benar
+          source={require('../../assets/images/ekraf.png')}
           style={styles.logo}
         />
-          <Image
-                            source={require('../../assets/images/SplashText.png')}
-                            className="w-45 h-155 mb-3"
-                            resizeMode="contain"
-                          />
-      </View>
+        <Animated.Image
+          source={require('../../assets/images/SplashText.png')}
+          style={[
+            styles.splashTextLogo,
+            {
+              opacity: textFadeAnim,
+              transform: [{ translateY: textTranslateYAnim }],
+            },
+          ]}
+          resizeMode="contain"
+        />
+      </Animated.View>
 
-      {/* Footer Section */}
       <View style={styles.footer}>
         <Text style={[styles.directedBy, isDarkMode ? styles.darkText : styles.lightText]}>Directed by :</Text>
         <View style={styles.footerLogos}>
           <Image
-            source={require('../../assets/images/ekraf-pusat.png')} // Path yang benar
+            source={require('../../assets/images/ekraf-pusat.png')}
             style={styles.footerLogo}
           />
           <Image
-            source={require('../../assets/images/disporapar.png')} // Path yang benar
+            source={require('../../assets/images/disporapar.png')}
             style={styles.footerLogo}
           />
         </View>
@@ -53,6 +102,7 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
     </View>
   );
 }
+
 type GradientColorProps = {
   text: string;
 };
@@ -61,7 +111,7 @@ const GradientColor = ({ text }: GradientColorProps) => {
   return (
     <MaskedView maskElement={<Text style={{ textAlign: 'center', fontFamily:'Poppins-SemiBold',fontSize:20 }}>{text}</Text>}>
       <LinearGradient
-        colors={['#FFAA01', '#1F6361']} 
+        colors={['#FFAA01', '#1F6361']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}>
         <Text style={{ textAlign: 'center', fontFamily:'Poppins-SemiBold', fontSize:30 }}>{text}</Text>
@@ -86,8 +136,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginBottom: 15,
+  },
+  splashTextLogo: {
+    width: 200,
+    height: 60,
+    marginBottom: 3,
     resizeMode: 'contain',
   },
   logoText: {
@@ -125,4 +182,3 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
   },
 });
-
