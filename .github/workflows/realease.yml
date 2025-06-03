@@ -84,7 +84,7 @@ jobs:
 
       - name: Set Android Signing Environment Variables
         run: |
-          echo "ANDROID_KEYSTORE_PATH=android/app/release-keystore.jks" >> $GITHUB_ENV
+          echo "ANDROID_KEYSTORE_PATH=release-keystore.jks" >> $GITHUB_ENV 
           echo "ANDROID_KEYSTORE_PASSWORD=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_ALIAS=${{ secrets.ANDROID_KEY_ALIAS }}" >> $GITHUB_ENV
           echo "ANDROID_KEY_PASSWORD=${{ secrets.ANDROID_KEY_PASSWORD }}" >> $GITHUB_ENV
