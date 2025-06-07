@@ -95,16 +95,16 @@ const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={[styles.loginButton, { backgroundColor: primaryColor }]}>
+      <TouchableOpacity style={[styles.loginButton, { backgroundColor: primaryColor }]} onPress={() => navigation.navigate('NavigationBottom')}>
         <Text style={styles.loginButtonText}>Masuk</Text>
       </TouchableOpacity>
 
       <View style={styles.registerContainer}>
-        <Text className={`text-lg font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+        <Text className={`text-lg font-semibold font-poppins-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
           Tidak punya akun?{' '}
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-          <Text className={`text-lg font-semibold ${linkTextColor}`} >Daftar</Text>
+          <Text className={`text-lg font-semibold font-poppins-bold ${linkTextColor}`} >Daftar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   welcomeSubtitle: {
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Poppins-Medium',
     fontSize: 14,
     textAlign: 'left',
     lineHeight: 20,

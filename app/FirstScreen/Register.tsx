@@ -44,14 +44,14 @@ export default function Register({ navigation }: { navigation: any }) {
             />
           </View>
 
-          <Text className={`text-3xl font-bold mb-2 text-center ${textColor}`}>
+          <Text className={`text-3xl mb-2 font-poppins-bold text-center ${textColor}`}>
             Daftar Akun
           </Text>
-          <Text className={`text-base text-center mb-8 ${subtitleColor}`}>
+          <Text className={`text-base font-poppins-medium text-center mb-8 ${subtitleColor}`}>
             Silakan buat akun untuk mengakses aplikasi ini
           </Text>
 
-          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Username</Text>
+          <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Username</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <Icon name='person-outline' color={iconColor} size={24} className='ml-0'/>            
             <TextInput
@@ -64,7 +64,7 @@ export default function Register({ navigation }: { navigation: any }) {
             />
           </View>
 
-          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Email</Text>
+          <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Email</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <Icon name='mail-outline' color={iconColor} size={24} className='ml-0'/>
             <TextInput
@@ -78,7 +78,7 @@ export default function Register({ navigation }: { navigation: any }) {
             />
           </View>
 
-          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Kata Sandi</Text>
+          <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Kata Sandi</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <Icon name='lock-closed-outline' color={iconColor} size={24} className='ml-0'/>
             <TextInput
@@ -98,7 +98,7 @@ export default function Register({ navigation }: { navigation: any }) {
             </TouchableOpacity>
           </View>
 
-          <Text className={`text-sm font-medium mb-1 ml-1 ${labelColor}`}>Konfirmasi Kata Sandi</Text>
+          <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Konfirmasi Kata Sandi</Text>
           <View className={`flex-row items-center border rounded-lg px-4 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor}`}>
             <Icon name='lock-closed-outline' color={iconColor} size={24} className='ml-0'/>
             <TextInput
@@ -119,13 +119,13 @@ export default function Register({ navigation }: { navigation: any }) {
           </View>
 
           <TouchableOpacity className={`${buttonBackgroundColor} py-4 rounded-lg items-center mt-5 mb-6`}>
-            <Text className="text-white text-lg font-semibold">Selanjutnya</Text>
+            <Text className="text-white text-lg font-poppins-bold">Selanjutnya</Text>
           </TouchableOpacity>
 
           <View className="flex-row justify-center items-center mt-4">
-            <Text className={`text-lg font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Sudah punya akun? </Text>
+            <Text className={`text-lg font-poppins-bold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Sudah punya akun? </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-              <Text className={`text-lg font-semibold ${linkTextColor}`}>Masuk</Text>
+              <Text className={`text-lg font-poppins-bold ${linkTextColor}`}>Masuk</Text>
             </TouchableOpacity>
           </View>
 
