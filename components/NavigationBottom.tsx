@@ -5,7 +5,6 @@ import DashboardScreen from '../app/DashboardScreen/Dashboard';
 import ProfileScreen from '../app/DashboardScreen/ProfilScreen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import type { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 import ProdukDataScreen from '../app/DashboardScreen/ProdukData';
 import NotificationScreen from '../app/DashboardScreen/Notification';
 import { useIsFocused } from '@react-navigation/native';
@@ -31,36 +30,27 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
   const [theme, setTheme] = useState<'light' | 'dark'>(systemColorScheme === 'dark' ? 'dark' : 'light');
   const isDark = theme === 'dark';
 
-  // Tombol toggle di header Dashboard
-  const dashboardOptions: BottomTabNavigationOptions = {
-    headerShown: true,
-    headerTitle: 'Dashboard',
-    headerStyle: {
-      backgroundColor: isDark ? '#18181b' : '#fff',
-    },
-    headerTitleStyle: {
-      color: isDark ? '#fff' : '#18181b',
-      fontFamily: 'Poppins-Bold',
-      fontSize: 18,
-      marginBottom: 4,
-    },
-    headerRight: () => (
-      <TouchableOpacity
-        onPress={() => setTheme(isDark ? 'light' : 'dark')}
-        style={{ marginRight: 16 }}
-        accessibilityLabel="Toggle dark mode">
-        <Ionicons name={isDark ? 'sunny' : 'moon'} size={24} color={isDark ? '#FFAA01' : '#18181b'} />
-      </TouchableOpacity>
-    ),
-    tabBarLabel: 'Dashboard',
-    tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => (
-      <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
-    ),
-  };
-
   return (
         <Tab.Navigator
           screenOptions={{
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: isDark ? '#18181b' : '#fff',
+            },
+            headerTitleStyle: {
+              color: isDark ? '#fff' : '#18181b',
+              fontFamily: 'Poppins-Bold',
+              fontSize: 18,
+              marginBottom: 4,
+            },
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => setTheme(isDark ? 'light' : 'dark')}
+                style={{ marginRight: 16 }}
+                accessibilityLabel="Toggle dark mode">
+                <Ionicons name={isDark ? 'sunny' : 'moon'} size={24} color={isDark ? '#FFAA01' : '#18181b'} />
+              </TouchableOpacity>
+            ),
             tabBarActiveTintColor: '#FFAA01',
             tabBarInactiveTintColor: '#BEBEBE',
             tabBarStyle: {
@@ -77,12 +67,17 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
             tabBarIconStyle: {
               marginTop: 4,
             },
-            headerShown: false,
           }}
         >
-            <Tab.Screen 
-              name="Dashboard" 
-              options={dashboardOptions}
+            <Tab.Screen
+              name="Dashboard"
+              options={{
+                headerTitle: 'Dashboard',
+                tabBarLabel: 'Dashboard',
+                tabBarIcon: ({ focused, color, size }) => (
+                  <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
+                ),
+              }}
             >
               {() => (
                 <FadeScreen isDark={isDark}>
@@ -90,9 +85,12 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
                 </FadeScreen>
               )}
             </Tab.Screen>
-            <Tab.Screen name="Produk" options={{
+            <Tab.Screen
+              name="Produk"
+              options={{
+                headerTitle: 'Produk',
                 tabBarLabel: 'Produk',
-                tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => (
+                tabBarIcon: ({ focused, color, size }) => (
                   <Ionicons name={focused ? 'cube' : 'cube-outline'} size={24} color={color} />
                 )
             }}>
@@ -102,9 +100,12 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
                 </FadeScreen>
               )}
             </Tab.Screen>
-            <Tab.Screen name="Notification" options={{
+            <Tab.Screen
+              name="Notification"
+              options={{
+                headerTitle: 'Notifikasi',
                 tabBarLabel: 'Notifikasi',
-                tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => (
+                tabBarIcon: ({ focused, color, size }) => (
                   <Ionicons name={focused ? 'notifications' : 'notifications-outline'} size={24} color={color} />
                 )
             }}>
@@ -114,9 +115,12 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
                 </FadeScreen>
               )}
             </Tab.Screen>
-            <Tab.Screen name="Profile" options={{
-                tabBarLabel: 'Profile',
-                tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => (
+            <Tab.Screen
+              name="Profile"
+              options={{
+                headerTitle: 'Profil',
+                tabBarLabel: 'Profil',
+                tabBarIcon: ({ focused, color, size }) => (
                   <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
                 )
             }}>
