@@ -1,10 +1,13 @@
 import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, Image, useColorScheme, StatusBar, Animated } from 'react-native';
+import { StyleSheet, Text, View, Image, useColorScheme, StatusBar, Animated, ActivityIndicator } from 'react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
-import {LinearGradient} from 'react-native-linear-gradient';
+import { LinearGradient } from 'react-native-linear-gradient';
 import { colors } from '../../constants/colors';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-export default function SplashScreen({ navigation }: { navigation: any }) {
+export default function SplashScreen() { // navigation prop tidak perlu di-destructure di sini jika menggunakan useNavigation
+  const navigation = useNavigation(); // Dapatkan objek navigasi
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'dark';
 
@@ -15,6 +18,7 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
   const textTranslateYAnim = useRef(new Animated.Value(20)).current;
 
   useEffect(() => {
+    // Jalankan semua animasi
     Animated.sequence([
       Animated.parallel([
         Animated.timing(iconFadeAnim, {
@@ -43,15 +47,34 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
           useNativeDriver: true,
         }),
       ]),
-    ]).start();
+    ]).start(() => {
+      // Setelah semua animasi selesai, baru periksa status otentikasi
+      const checkAuthStatus = async () => {
+        try {
+          const userToken = await AsyncStorage.getItem('userToken');
 
-    const totalAnimationDuration = 800 + 700 + 200;
-    const timer = setTimeout(() => {
-      navigation.replace('Login');
-    }, totalAnimationDuration + 500);
+          if (userToken) {
+            // Token ditemukan, pengguna sudah login. Arahkan ke NavigationBottom.
+            navigation.replace('NavigationBottom');
+          } else {
+            // Token tidak ditemukan, pengguna belum login. Arahkan ke Login.
+            navigation.replace('Login');
+          }
+        } catch (e) {
+          console.error("Gagal memuat token dari penyimpanan:", e);
+          // Jika ada error, tetap arahkan ke Login sebagai fallback
+          navigation.replace('Login');
+        }
+      };
 
-    return () => clearTimeout(timer);
-  }, [navigation, iconFadeAnim, iconScaleAnim, textFadeAnim, textTranslateYAnim]);
+      // Jalankan pemeriksaan status otentikasi setelah animasi selesai
+      checkAuthStatus();
+    });
+
+    // Tidak perlu setTimeout terpisah karena logika navigasi ada di callback .start() animasi
+    // dan useNavigation() sudah menangani dependensi navigasi
+
+  }, [iconFadeAnim, iconScaleAnim, textFadeAnim, textTranslateYAnim, navigation]); // Tambahkan navigation sebagai dependensi
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
@@ -85,6 +108,7 @@ export default function SplashScreen({ navigation }: { navigation: any }) {
           resizeMode="contain"
         />
       </Animated.View>
+      <ActivityIndicator size="large" color="#FFAA01" style={styles.activityIndicator} />
 
       <View style={styles.footer}>
         <Text style={[styles.directedBy, isDarkMode ? styles.darkText : styles.lightText]}>Directed by :</Text>
@@ -181,4 +205,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginHorizontal: 30,
   },
+  activityIndicator: {
+    marginTop: 50, // Sesuaikan posisi indikator agar terlihat baik
+  }
 });
