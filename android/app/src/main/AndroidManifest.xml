@@ -27,9 +27,14 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="ekraf"
-                    android:host="reset-password" />
+                <data android:scheme="ekraf" android:host="reset-password" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="ekraf" android:host="verification-success" />
             </intent-filter>
 
         </activity>
