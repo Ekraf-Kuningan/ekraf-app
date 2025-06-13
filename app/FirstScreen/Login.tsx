@@ -52,6 +52,7 @@ export default function Login({ navigation }: { navigation: any }) {
         await AsyncStorage.setItem('userToken', token); // Simpan token
         await AsyncStorage.setItem('userData', JSON.stringify(user)); // Simpan data user jika diperlukan
         Alert.alert('Sukses', message);
+
         navigation.replace('NavigationBottom'); // Ganti layar ke halaman utama setelah login
       } else {
         // Ini mungkin tidak akan terpanggil karena axios akan throw error untuk status non-2xx
@@ -64,7 +65,7 @@ export default function Login({ navigation }: { navigation: any }) {
         error.response?.data?.message || 'Tidak dapat terhubung ke server. Mohon coba lagi.'
       );
     } finally {
-      setLoading(false); // Nonaktifkan loading, baik sukses maupun gagal
+      setLoading(false);
     }
   };
 

@@ -16,12 +16,20 @@ function FadeScreen({ children, isDark }: { children: React.ReactNode; isDark: b
   if (isDark) {
     return <>{children}</>;
   }
+
   const isFocused = useIsFocused();
-  const opacity = useSharedValue(isFocused ? 1 : 0);
+  const opacity = useSharedValue(0);
+
   React.useEffect(() => {
     opacity.value = withTiming(isFocused ? 1 : 0, { duration: 300 });
-  }, [isFocused]);
-  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
+  }, [isFocused, opacity]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+    };
+  });
+
   return <Animated.View style={[{ flex: 1 }, animatedStyle]}>{children}</Animated.View>;
 }
 
@@ -126,7 +134,7 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
             }}>
               {() => (
                 <FadeScreen isDark={isDark}>
-                  <ProfileScreen />
+                  <ProfileScreen isDark={isDark} />
                 </FadeScreen>
               )}
             </Tab.Screen>
