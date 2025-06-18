@@ -40,8 +40,7 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
     },
     headerTitleStyle: {
       color: isDark ? '#fff' : '#18181b',
-      fontFamily: 'Poppins-Bold',
-      fontSize: 18,
+      fontFamily: 'Poppins-Medium', // perbaiki case font
       marginBottom: 4,
     },
     headerRight: () => (
@@ -70,7 +69,7 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
                 height: 60,
             },
             tabBarLabelStyle: {
-              fontFamily: 'Poppins-Medium',
+              fontFamily: 'Poppins-Medium', // perbaiki case font
               fontSize: 11,
                 marginBottom: 6,
             },

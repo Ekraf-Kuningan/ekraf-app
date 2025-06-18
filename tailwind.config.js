@@ -12,8 +12,7 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
-      // Jika Anda menggunakan font kustom seperti 'font-poppins-bold'
-      // Anda perlu mendefinisikannya di sini
+    
       fontFamily: {
         'poppins-regular': ['Poppins-Regular'], // Nama file font sebenarnya
         'poppins-medium': ['Poppins-Medium'],

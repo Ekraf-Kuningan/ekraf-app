@@ -20,9 +20,7 @@ export default function Login({ navigation }: { navigation: any }) {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
-
-
+  const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
   const currentTextColor = isDarkMode ? darkTextColor : lightTextColor;
   const currentSubTextColor = isDarkMode ? darkSubTextColor : lightSubTextColor;
   const currentPlaceholderColor = isDarkMode ? darkPlaceholderColor : lightPlaceholderColor;
@@ -44,9 +42,8 @@ const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
                     source={require('../../assets/images/LogoText.png')}
                     className="w-72 h-249 mb-3"
                     resizeMode="contain"
-                  />
+                />
       </View>
-
       <View style={styles.welcomeContainer}>
         <Text style={[styles.welcomeTitle, { color: currentTextColor }]}>Selamat Datang</Text>
         <Text style={[styles.welcomeSubtitle, { color: currentSubTextColor }]}>
