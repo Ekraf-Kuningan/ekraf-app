@@ -83,6 +83,24 @@ const produkList = [
     image: require('../../assets/images/ekraf.png'),
     price: 'Rp. 95.000',
   },
+  {
+    key: '13',
+    title: 'Lukisan Alam',
+    image: require('../../assets/images/ekraf.png'),
+    price: 'Rp. 300.000',
+  },
+  {
+    key: '14',
+    title: 'T-Shirt',
+    image: require('../../assets/images/ekraf.png'),
+    price: 'Rp. 95.000',
+  },
+  {
+    key: '15',
+    title: 'Lukisan Alam',
+    image: require('../../assets/images/ekraf.png'),
+    price: 'Rp. 300.000',
+  },
 ];
 const primaryColor = '#FFAA01';
 const lightTextColor = '#000000';
