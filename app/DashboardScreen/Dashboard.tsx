@@ -77,6 +77,12 @@ const produkList = [
     image: require('../../assets/images/ekraf.png'),
     price: 'Rp. 95.000',
   },
+  {
+    key: '12',
+    title: 'T-Shirt',
+    image: require('../../assets/images/ekraf.png'),
+    price: 'Rp. 95.000',
+  },
 ];
 const primaryColor = '#FFAA01';
 const lightTextColor = '#000000';
