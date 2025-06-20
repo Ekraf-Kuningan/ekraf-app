@@ -1,3 +1,4 @@
+yarn install
 cd android
 ./gradlew clean
 cd ..
