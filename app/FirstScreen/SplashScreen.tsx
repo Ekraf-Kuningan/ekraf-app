@@ -52,8 +52,9 @@ export default function SplashScreen() { // navigation prop tidak perlu di-destr
       const checkAuthStatus = async () => {
         try {
           const userToken = await AsyncStorage.getItem('userToken');
+          const userData = await AsyncStorage.getItem('userData');
 
-          if (userToken) {
+          if (userToken && userData) {
             // Token ditemukan, pengguna sudah login. Arahkan ke NavigationBottom.
             navigation.replace('NavigationBottom');
           } else {

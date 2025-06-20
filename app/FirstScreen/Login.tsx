@@ -49,7 +49,7 @@ export default function Login({ navigation }: { navigation: any }) {
 
       if (response.status === 200) {
         const { message, token, user } = response.data;
-        await AsyncStorage.setItem('', token); // Simpan token
+        await AsyncStorage.setItem('userToken', token); // Simpan token
         await AsyncStorage.setItem('userData', JSON.stringify(user)); // Simpan data user jika diperlukan
         Alert.alert('Sukses', message);
 
