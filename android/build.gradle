@@ -19,3 +19,5 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// nodeModulesPath should only be defined and used in the app/build.gradle or module-level build.gradle if needed
