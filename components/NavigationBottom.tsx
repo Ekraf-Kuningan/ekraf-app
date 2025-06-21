@@ -121,7 +121,7 @@ export default function NavigationBottom({navigation}: { navigation: any }) {
             }}>
               {() => (
                 <FadeScreen isDark={isDark}>
-                  <ProfileScreen />
+                  <ProfileScreen isDark={isDark} />
                 </FadeScreen>
               )}
             </Tab.Screen>
