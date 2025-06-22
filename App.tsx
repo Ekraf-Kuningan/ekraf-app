@@ -1,8 +1,7 @@
 // App.js (Main Application File)
 import {
   StyleSheet,
-  TouchableOpacity,
-  View, // Dipertahankan untuk FadeScreen di dark mode
+  TouchableOpacity, // Dipertahankan untuk FadeScreen di dark mode
 } from 'react-native';
 import React, { useCallback, ReactNode } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';

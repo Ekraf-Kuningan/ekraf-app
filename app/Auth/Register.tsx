@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, ScrollView, Image, Alert, ActivityIndicator, Modal, FlatList, Pressable, StyleSheet } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
@@ -45,7 +45,7 @@ export default function Register({ navigation }: { navigation: any }) {
           setBusinessCategories(response.data.data);
         }
       } catch (error) {
-        console.error("Failed to fetch business categories:", error);
+        console.error('Failed to fetch business categories:', error);
         Alert.alert('Error', 'Gagal memuat kategori usaha. Silakan coba lagi nanti.');
       }
     };
@@ -140,49 +140,49 @@ export default function Register({ navigation }: { navigation: any }) {
           {/* === FORM INPUTS === */}
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Username</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
-            <Icon name='person-outline' color={iconColor} size={24} />
+            <Icon name="person-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Masukkan username" placeholderTextColor={placeholderTextColorValue} value={username} onChangeText={setUsername} autoCapitalize="none" />
           </View>
 
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Email</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
-            <Icon name='mail-outline' color={iconColor} size={24} />
+            <Icon name="mail-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Masukkan email" placeholderTextColor={placeholderTextColorValue} keyboardType="email-address" value={email} onChangeText={setEmail} autoCapitalize="none" />
           </View>
-          
+
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Kata Sandi</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
-            <Icon name='lock-closed-outline' color={iconColor} size={24} />
+            <Icon name="lock-closed-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Masukkan kata sandi" placeholderTextColor={placeholderTextColorValue} secureTextEntry={!isPasswordVisible} value={password} onChangeText={setPassword} autoCapitalize="none" />
             <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} className="p-2">
-              <Icon name={isPasswordVisible ? "eye-off-outline" : "eye-outline"} size={24} color={iconColor} />
+              <Icon name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'} size={24} color={iconColor} />
             </TouchableOpacity>
           </View>
 
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Konfirmasi Kata Sandi</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-5 ${inputBorderColor} ${inputBackgroundColor}`}>
-            <Icon name='lock-closed-outline' color={iconColor} size={24} />
+            <Icon name="lock-closed-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Konfirmasi kata sandi Anda" placeholderTextColor={placeholderTextColorValue} secureTextEntry={!isConfirmPasswordVisible} value={confirmPassword} onChangeText={setConfirmPassword} autoCapitalize="none" />
             <TouchableOpacity onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)} className="p-2">
-              <Icon name={isConfirmPasswordVisible ? "eye-off-outline" : "eye-outline"} size={24} color={iconColor} />
+              <Icon name={isConfirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'} size={24} color={iconColor} />
             </TouchableOpacity>
           </View>
 
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Nama Lengkap</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
-            <Icon name='person-circle-outline' color={iconColor} size={24} />
+            <Icon name="person-circle-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Masukkan nama lengkap Anda" placeholderTextColor={placeholderTextColorValue} value={nama_user} onChangeText={setNamaUser} autoCapitalize="words" />
           </View>
 
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Nomor HP</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
-            <Icon name='call-outline' color={iconColor} size={24} />
+            <Icon name="call-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Contoh: 08123456789" placeholderTextColor={placeholderTextColorValue} value={nohp} onChangeText={setNohp} keyboardType="phone-pad" />
           </View>
 
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Nama Usaha</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
-            <Icon name='business-outline' color={iconColor} size={24} />
+            <Icon name="business-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Masukkan nama usaha Anda" placeholderTextColor={placeholderTextColorValue} value={nama_usaha} onChangeText={setNamaUsaha} autoCapitalize="words" />
           </View>
 
@@ -203,7 +203,7 @@ export default function Register({ navigation }: { navigation: any }) {
               textColor={textColor}
               placeholderTextColorValue={placeholderTextColorValue}
           />
-          
+
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Status Usaha</Text>
           <CustomPicker
               items={[

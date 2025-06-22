@@ -6,7 +6,7 @@ import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useTheme } from '../Context/ThemeContext';
 
 const ProfileScreen = () => {
-  const { isDark } = useTheme(); 
+  const { isDark } = useTheme();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -24,8 +24,8 @@ const ProfileScreen = () => {
             setUserData(parsedData);
           }
         } catch (e) {
-          setError("Gagal memuat data pengguna.");
-          console.error("Failed to fetch user data from storage", e);
+          setError('Gagal memuat data pengguna.');
+          console.error('Failed to fetch user data from storage', e);
         } finally {
           setIsLoading(false);
         }
@@ -37,27 +37,27 @@ const ProfileScreen = () => {
 
   const handleLogout = () => {
     Alert.alert(
-      "Konfirmasi Logout",
-      "Apakah Anda yakin ingin keluar?",
+      'Konfirmasi Logout',
+      'Apakah Anda yakin ingin keluar?',
       [
         {
-          text: "Batal",
-          style: "cancel"
+          text: 'Batal',
+          style: 'cancel',
         },
         {
-          text: "Logout",
+          text: 'Logout',
           onPress: async () => {
             try {
               await AsyncStorage.removeItem('userData');
               await AsyncStorage.removeItem('userToken'); // Hapus token jika ada
               navigation.navigate('Login');
             } catch (e) {
-              console.error("Failed to clear user data", e);
-              Alert.alert("Error", "Gagal untuk logout.");
+              console.error('Failed to clear user data', e);
+              Alert.alert('Error', 'Gagal untuk logout.');
             }
           },
-          style: "destructive"
-        }
+          style: 'destructive',
+        },
       ]
     );
   };
@@ -80,7 +80,7 @@ const ProfileScreen = () => {
 
   return (
     <View className={`flex-1 ${isDark ? 'bg-zinc-900' : 'bg-gray-100'}`}>
-      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View className="bg-yellow-400 h-48 rounded-bl-[60px] rounded-br-[60px] w-full absolute top-0" />
 

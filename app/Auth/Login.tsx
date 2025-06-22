@@ -24,14 +24,14 @@ export default function Login({ navigation }: { navigation: any }) {
     title: '',
     message: '',
     onClose: () => {},
-    buttonText: 'OK'
+    buttonText: 'OK',
   });
 
   // Fungsi untuk menampilkan popup
   const showPopup = (
-    theme: 'success' | 'error' | 'warning' | 'info', 
-    title: string, 
-    message: string, 
+    theme: 'success' | 'error' | 'warning' | 'info',
+    title: string,
+    message: string,
     buttonText: string = 'Mengerti',
     onCloseAction = () => {}
   ) => {
@@ -44,7 +44,7 @@ export default function Login({ navigation }: { navigation: any }) {
       onClose: () => {
         setPopup(prev => ({ ...prev, visible: false }));
         onCloseAction();
-      }
+      },
     });
   };
 
@@ -64,7 +64,7 @@ export default function Login({ navigation }: { navigation: any }) {
       const { message, token, user } = response.data;
       await AsyncStorage.setItem('userToken', token);
       await AsyncStorage.setItem('userData', JSON.stringify(user));
-      
+
       showPopup(
         'success',
         'Login Berhasil',
@@ -140,7 +140,7 @@ export default function Login({ navigation }: { navigation: any }) {
           />
           <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} className="p-3">
             <Icon
-              name={passwordVisible ? "eye-off-outline" : "eye-outline"}
+              name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={22}
               className="text-gray-400 dark:text-gray-500"
             />
@@ -175,7 +175,7 @@ export default function Login({ navigation }: { navigation: any }) {
           <Text className="font-p-semibold text-sm text-[#FFAA01]">Daftar</Text>
         </TouchableOpacity>
       </View>
-      
+
       {/* Komponen Pop Up yang akan ditampilkan di atas segalanya */}
       <PopupTemplate
         visible={popup.visible}
@@ -183,8 +183,7 @@ export default function Login({ navigation }: { navigation: any }) {
         theme={popup.theme}
         title={popup.title}
         message={popup.message}
-        buttonText={popup.buttonText}
-      />
+        buttonText={popup.buttonText} customIcon={undefined} customLogo={undefined}      />
     </View>
   );
 }

@@ -25,7 +25,7 @@ const themeConfig = {
 // Karena NativeWind/TailwindCSS tidak bisa membuat class secara dinamis (cth: `bg-${warna}`),
 // kita perlu mendefinisikan nama class lengkap agar bisa dideteksi saat build.
 // Ini adalah pattern yang umum digunakan.
-const colorMap = {
+const colorMap: Record<string, string> = {
     'bg-yellow-400': 'bg-[#F2A307]',
     'text-yellow-400': 'text-[#F2A307]',
     'bg-red-500': 'bg-red-500',
@@ -58,9 +58,9 @@ const PopupTemplate = ({
   buttonText = 'Mengerti',
   customIcon,
   customLogo,
-}) => {
+}: { visible: boolean; onClose: () => void; theme?: 'success' | 'error' | 'warning' | 'info'; title: string; message: string; buttonText?: string; customIcon?: { name: string; }; customLogo?: import('react-native').ImageSourcePropType; }) => {
   const currentTheme = themeConfig[theme] || themeConfig.info;
-  
+
   // Ambil nama class dari map berdasarkan tema yang dipilih
   const headerBgClass = colorMap[`bg-${currentTheme.color}`] || 'bg-gray-400';
   const iconColorClass = colorMap[`text-${currentTheme.color}`] || 'text-gray-400';
