@@ -18,6 +18,10 @@ module.exports = {
         'poppins-medium': ['Poppins-Medium'],
         'poppins-bold': ['Poppins-SemiBold'],
         'poppins-extrabold': ['Poppins-ExtraBold'],
+        'p-regular': ['Poppins-Regular'],
+        'p-medium': ['Poppins-Medium'],
+        'p-semibold': ['Poppins-SemiBold'],
+        'p-bold': ['Poppins-Bold'],
       },
       colors: {
         'primary': '#FFAA01', // Warna utama

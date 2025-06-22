@@ -56,7 +56,7 @@ export default function SplashScreen() { // navigation prop tidak perlu di-destr
 
           if (userToken && userData) {
             // Token ditemukan, pengguna sudah login. Arahkan ke NavigationBottom.
-            navigation.replace('NavigationBottom');
+            navigation.replace('MainApp');
           } else {
             // Token tidak ditemukan, pengguna belum login. Arahkan ke Login.
             navigation.replace('Login');

@@ -12,9 +12,7 @@ interface BusinessCategory {
 
 
 
-// --- KOMPONEN CUSTOM PICKER ---
-// --- KOMPONEN CUSTOM PICKER (Diperbarui) ---
-// Ganti komponen CustomPicker yang lama dengan yang ini.
+
 
 // --- KOMPONEN UTAMA REGISTER ---
 export default function Register({ navigation }: { navigation: any }) {
@@ -99,7 +97,7 @@ export default function Register({ navigation }: { navigation: any }) {
 
     try {
       const response = await axios.post('https://ekraf.asepharyana.tech/api/auth/register/umkm', registrationData, {
-        headers: { 'Content-Type': 'application/json', 'accept': 'application/json' }
+        headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
       });
       if (response.data.success) {
         Alert.alert('Pendaftaran Berhasil', response.data.message);

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { TouchableOpacity, Text, Modal, Pressable, FlatList, StyleSheet } from "react-native";
+import { useState } from 'react';
+import { TouchableOpacity, Text, Modal, Pressable, FlatList, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface PickerItem {
@@ -16,7 +16,6 @@ export const CustomPicker = ({
     inputBorderColor,
     inputBackgroundColor,
     textColor,
-    placeholderTextColorValue
 }: {
     items: PickerItem[],
     selectedValue: any,
@@ -77,7 +76,7 @@ export const CustomPicker = ({
                             data={items}
                             renderItem={renderItem}
                             keyExtractor={(item) => String(item.value)}
-                            style={{ maxHeight: 300 }}
+                            style={styles.flatList}
                         />
                         {/* V V V TOMBOL TUTUP DIHAPUS DARI SINI V V V
                          */}
@@ -95,5 +94,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    },
+    flatList: {
+        maxHeight: 300,
     },
 });
