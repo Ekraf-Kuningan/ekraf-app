@@ -2,9 +2,7 @@
 import {
   StyleSheet,
   TouchableOpacity,
-  Animated,
-  Text, // Menambahkan Text untuk dummy components jika diperlukan
-  View, // Menambahkan View untuk dummy components jika diperlukan
+  View, // Dipertahankan untuk FadeScreen di dark mode
 } from 'react-native';
 import React, { useCallback, ReactNode } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -21,21 +19,23 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ThemeProvider, useTheme } from './app/Context/ThemeContext';
 
-// Import komponen layar yang telah dipisahkan
+// --- Import dari React Native Reanimated ---
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+
+// Import komponen layar
 import Login from './app/Auth/Login';
 import Register from './app/Auth/Register';
 import ResetPassword from './app/Auth/ResetPassword';
 import DashboardScreen from './app/DashboardScreen/Dashboard';
-import ProfileScreen from './app/DashboardScreen/ProfilScreen'; // Diperbarui ke ProfilScreen.js
-import AddProdukScreen from './app/DashboardScreen/AddProduk'; // Diperbarui ke AddProduk.js
-
-import './global.css'; // Asumsi ini adalah file CSS global untuk web, jika relevan dengan setup RN Anda.
+import ProfileScreen from './app/DashboardScreen/ProfilScreen';
+import AddProdukScreen from './app/DashboardScreen/AddProduk';
 import SplashScreen from './app/layout/SplashScreen';
+
+import './global.css';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// Antarmuka untuk properti komponen
 interface FadeScreenProps {
   children: ReactNode;
 }
@@ -48,34 +48,42 @@ interface TabBarIconProps {
 
 /**
  * Komponen pembungkus untuk menerapkan efek fade-in/fade-out pada layar navigasi tab.
- * Menggunakan React Native's Animated API.
+ * --- Diperbarui menggunakan React Native Reanimated ---
  */
 function FadeScreen({ children }: FadeScreenProps) {
+  const { isDark } = useTheme(); // Mengambil status tema dari context
   const isFocused = useIsFocused();
-  // Menggunakan useRef untuk mempertahankan Animated.Value antar render
-  const opacity = React.useRef(new Animated.Value(0)).current;
+  const opacity = useSharedValue(0); // Menggunakan useSharedValue dari Reanimated
 
   React.useEffect(() => {
-    // Animasi opacity berdasarkan fokus layar
-    Animated.timing(opacity, {
-      toValue: isFocused ? 1 : 0,
-      duration: 300, // Durasi animasi 300ms
-      useNativeDriver: true, // Mengaktifkan native driver untuk performa yang lebih baik
-    }).start(); // Memulai animasi
-  }, [isFocused, opacity]); // Dependencies untuk useEffect
+    // Memicu animasi menggunakan withTiming
+    opacity.value = withTiming(isFocused ? 1 : 0, { duration: 300 });
+  }, [isFocused, opacity]);
+
+  // Membuat style animasi menggunakan useAnimatedStyle
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+    };
+  });
+
+  // Logika dari contoh Anda: animasi fade dinonaktifkan di dark mode
+  if (isDark) {
+    // Kembalikan View biasa tanpa animasi untuk dark mode, tapi tetap dengan style flex: 1
+    return <View style={styles.animatedContainer}>{children}</View>;
+  }
 
   return (
-    <Animated.View style={[styles.animatedContainer, { opacity }]}>
+    <Animated.View style={[styles.animatedContainer, animatedStyle]}>
       {children}
     </Animated.View>
   );
 }
 
-// Komponen ikon tab bar untuk setiap layar
+// Komponen ikon tab bar untuk setiap layar (tetap sama)
 const DashboardTabBarIcon = ({ focused, color }: TabBarIconProps) => (
   <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
 );
-// MitraTabBarIcon dan ProdukTabBarIcon dihapus karena komponen terkait tidak lagi diimpor
 const ProfileTabBarIcon = ({ focused, color }: TabBarIconProps) => (
   <Ionicons name={focused ? 'person' : 'person-outline'} size={24} color={color} />
 );
@@ -83,10 +91,7 @@ const AddProdukTabBarIcon = ({ focused, color }: TabBarIconProps) => (
   <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} size={24} color={color} />
 );
 
-/**
- * Tombol untuk mengganti tema terang/gelap di header.
- * Menggunakan hook `useTheme` dari ThemeContext.
- */
+// Tombol toggle tema (tetap sama)
 const HeaderThemeToggleButton = () => {
   const { isDark, toggleTheme } = useTheme();
   return (
@@ -99,54 +104,48 @@ const HeaderThemeToggleButton = () => {
   );
 };
 
-/**
- * Navigator tab bawah utama aplikasi.
- * Berisi semua layar yang dapat diakses melalui tab bar.
- */
+// MainTabNavigator (sedikit penyesuaian pada pemanggilan komponen)
 function MainTabNavigator() {
-  const { isDark } = useTheme(); // Mendapatkan status tema dari konteks
+  const { isDark } = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false, // Header layar tab diatur oleh Stack Navigator di atasnya
-        tabBarActiveTintColor: '#FFAA01', // Warna ikon/label aktif
-        tabBarInactiveTintColor: '#BEBEBE', // Warna ikon/label tidak aktif
+        headerShown: false,
+        tabBarActiveTintColor: '#FFAA01',
+        tabBarInactiveTintColor: '#BEBEBE',
         tabBarStyle: {
-          backgroundColor: isDark ? '#18181b' : '#fff', // Warna latar belakang tab bar berdasarkan tema
-          borderTopWidth: 0, // Menghilangkan border atas
-          height: 60, // Tinggi tab bar
+          backgroundColor: isDark ? '#18181b' : '#fff',
+          borderTopWidth: 0,
+          height: 60,
         },
         tabBarLabelStyle: {
           fontSize: 11,
-          paddingBottom: 6, // Padding bawah untuk label
+          paddingBottom: 6,
         },
         tabBarIconStyle: {
-          marginTop: 4, // Margin atas untuk ikon
+          marginTop: 4,
         },
       }}
     >
+      {/* Prop isDark yang hardcoded dihapus, karena komponen screen seharusnya mengambil dari context jika perlu */}
       <Tab.Screen name="Dashboard" options={{ tabBarIcon: DashboardTabBarIcon }}>
-        {() => <FadeScreen><DashboardScreen isDark={false} /></FadeScreen>}
+        {() => <FadeScreen><DashboardScreen /></FadeScreen>}
       </Tab.Screen>
-      {/* Tab Manajemen Mitra dan Manajemen Produk dihapus */}
       <Tab.Screen name="Add Produk" options={{ tabBarIcon: AddProdukTabBarIcon }}>
-        {() => <FadeScreen><AddProdukScreen isDark={false} /></FadeScreen>}
+        {() => <FadeScreen><AddProdukScreen /></FadeScreen>}
       </Tab.Screen>
       <Tab.Screen name="Profil" options={{ tabBarIcon: ProfileTabBarIcon }}>
-        {() => <FadeScreen><ProfileScreen isDark={false} /></FadeScreen>}
+        {() => <FadeScreen><ProfileScreen /></FadeScreen>}
       </Tab.Screen>
     </Tab.Navigator>
   );
 }
 
-/**
- * Fungsi pembantu untuk mendapatkan judul header berdasarkan rute yang difokuskan di tab navigator.
- */
+// Fungsi getHeaderTitle (tetap sama)
 function getHeaderTitle(route: RouteProp<ParamListBase, 'MainApp'>) {
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Dashboard'; // Dapatkan nama rute yang difokuskan
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Dashboard';
   switch (routeName) {
-    // Case untuk 'Manajemen Mitra' dan 'Manajemen Produk' dihapus
     case 'Add Produk': return 'Tambah Produk';
     case 'Profil': return 'Profil';
     case 'Dashboard':
@@ -155,53 +154,39 @@ function getHeaderTitle(route: RouteProp<ParamListBase, 'MainApp'>) {
   }
 }
 
-/**
- * Komponen utama yang berisi NavigationContainer dan Stack Navigator.
- * Ini adalah titik masuk utama untuk navigasi aplikasi setelah splash screen.
- */
+// Komponen AppContent (tetap sama)
 function AppContent() {
-  const { isDark } = useTheme(); // Mendapatkan status tema dari konteks
+  const { isDark } = useTheme();
 
-  // Definisi tema untuk NavigationContainer
   const MyTheme = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: '#f2f2f2' } };
   const MyDarkTheme = { ...DarkTheme, colors: { ...DarkTheme.colors, background: '#121212' } };
 
-  // Menggunakan useCallback untuk mengoptimalkan renderHeaderRight
   const renderHeaderRight = useCallback(() => <HeaderThemeToggleButton />, []);
 
   return (
     <NavigationContainer theme={isDark ? MyDarkTheme : MyTheme}>
       <Stack.Navigator initialRouteName="SplashScreen">
-        {/* Layar otentikasi dan splash */}
         <Stack.Screen name="SplashScreen" component={SplashScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-
-        {/* Layar utama aplikasi dengan tab navigator */}
         <Stack.Screen
           name="MainApp"
           component={MainTabNavigator}
           options={({ route }) => ({
-            headerTitle: getHeaderTitle(route), // Judul header dinamis
-            headerStyle: { backgroundColor: isDark ? '#18181b' : '#fff' }, // Gaya header berdasarkan tema
-            headerTitleStyle: { color: isDark ? '#fff' : '#18181b' }, // Gaya judul header berdasarkan tema
-            headerRight: renderHeaderRight, // Tombol toggle tema di kanan atas
-            headerShadowVisible: false, // Menghilangkan bayangan header
+            headerTitle: getHeaderTitle(route),
+            headerStyle: { backgroundColor: isDark ? '#18181b' : '#fff' },
+            headerTitleStyle: { color: isDark ? '#fff' : '#18181b' },
+            headerRight: renderHeaderRight,
+            headerShadowVisible: false,
           })}
         />
-
-        {/* Layar EditMitra dihapus karena komponen tidak lagi diimpor */}
-        {/* Tambahkan layar Stack.Screen lainnya di sini jika diperlukan */}
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-/**
- * Komponen akar aplikasi.
- * Membungkus seluruh aplikasi dengan ThemeProvider untuk menyediakan konteks tema.
- */
+// Komponen App (tetap sama)
 export default function App() {
   return (
     <ThemeProvider>
@@ -210,7 +195,7 @@ export default function App() {
   );
 }
 
-// Gaya StyleSheet untuk komponen
+// StyleSheet (tetap sama)
 const styles = StyleSheet.create({
   animatedContainer: {
     flex: 1, // Pastikan komponen mengisi seluruh ruang yang tersedia
