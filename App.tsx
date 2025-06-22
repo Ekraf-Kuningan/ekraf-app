@@ -51,28 +51,28 @@ interface TabBarIconProps {
  * --- Diperbarui menggunakan React Native Reanimated ---
  */
 function FadeScreen({ children }: FadeScreenProps) {
-  const { isDark } = useTheme(); // Mengambil status tema dari context
+  const { isDark } = useTheme();
   const isFocused = useIsFocused();
-  const opacity = useSharedValue(0); // Menggunakan useSharedValue dari Reanimated
+  const opacity = useSharedValue(0);
 
   React.useEffect(() => {
-    // Memicu animasi menggunakan withTiming
-    opacity.value = withTiming(isFocused ? 1 : 0, { duration: 300 });
-  }, [isFocused, opacity]);
+    const targetOpacity = isFocused ? 1 : 0;
+    // Hanya jalankan animasi (withTiming) di mode terang.
+    // Di mode gelap, langsung ubah opacity tanpa animasi.
+    if (isDark) {
+      opacity.value = targetOpacity;
+    } else {
+      opacity.value = withTiming(targetOpacity, { duration: 300 });
+    }
+  }, [isFocused, isDark, opacity]); // isDark ditambahkan sebagai dependency
 
-  // Membuat style animasi menggunakan useAnimatedStyle
   const animatedStyle = useAnimatedStyle(() => {
     return {
       opacity: opacity.value,
     };
   });
 
-  // Logika dari contoh Anda: animasi fade dinonaktifkan di dark mode
-  if (isDark) {
-    // Kembalikan View biasa tanpa animasi untuk dark mode, tapi tetap dengan style flex: 1
-    return <View style={styles.animatedContainer}>{children}</View>;
-  }
-
+  // Selalu render Animated.View, logikanya ada di dalam useEffect.
   return (
     <Animated.View style={[styles.animatedContainer, animatedStyle]}>
       {children}

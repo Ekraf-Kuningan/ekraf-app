@@ -3,8 +3,10 @@ import { View, Text, TouchableOpacity, StatusBar, ActivityIndicator, Alert } fro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '../Context/ThemeContext';
 
-const ProfileScreen = ({ isDark }: { isDark: boolean }) => {
+const ProfileScreen = () => {
+  const { isDark } = useTheme(); 
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

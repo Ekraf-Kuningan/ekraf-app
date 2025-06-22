@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, useColorScheme, StatusBar, PermissionsAndroid, Platform, Alert, Linking, ActionSheetIOS } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {launchImageLibrary, launchCamera} from 'react-native-image-picker';
+import { useTheme } from '../Context/ThemeContext';
 
 const requestGalleryPermission = async () => {
   try {
@@ -10,12 +11,12 @@ const requestGalleryPermission = async () => {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
         );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) return true;
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {return true;}
       } else {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
         );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) return true;
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {return true;}
       }
       Alert.alert(
         'Akses Ditolak',
@@ -55,8 +56,7 @@ const kategoriList = [
 ];
 
 export default function PendaftaranProduk() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark } = useTheme();
   const currentPlaceholderColor = isDark ? '#777' : '#888';
 
   const [namaBarang, setNamaBarang] = useState('');
@@ -107,7 +107,7 @@ export default function PendaftaranProduk() {
         barStyle={isDark ? 'light-content' : 'dark-content'}
         backgroundColor={isDark ? '#18181b' : '#fff'}
       />
-      <ScrollView className={`flex-1 bg-white dark:bg-[#18181b]`} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+      <ScrollView className={'flex-1 bg-white dark:bg-[#18181b]'} contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
         {/* Header */}
         <View className="flex-row items-center px-4 pt-4 mb-2">
           <TouchableOpacity className="mr-2">

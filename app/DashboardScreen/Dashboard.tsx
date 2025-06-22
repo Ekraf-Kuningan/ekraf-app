@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, StatusBar, useColorScheme, Image, ScrollView, T
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as Animatable from 'react-native-animatable';
+import { useTheme } from '../Context/ThemeContext';
 
 const kategoriList = [
   { key: '1', label: 'Fashion', icon: require('../../assets/images/ekraf.png') },
@@ -97,17 +98,16 @@ const darkPlaceholderColor = '#777777';
 const darkBorderColor = '#555555';
 
 
-export default function Dashboard({ isDark }: { isDark: boolean }) {
-  const colorScheme = useColorScheme();
-    const isDarkMode = colorScheme === 'dark';
-    const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
-    const currentTextColor = isDarkMode ? darkTextColor : lightTextColor;
-    const currentSubTextColor = isDarkMode ? darkSubTextColor : lightSubTextColor;
-    const currentPlaceholderColor = isDarkMode ? darkPlaceholderColor : lightPlaceholderColor;
-    const currentBorderColor = isDarkMode ? darkBorderColor : lightBorderColor;
-    const currentInputBackgroundColor = isDarkMode ? '#1E1E1E' : '#FFFFFF';
-    const currentBackgroundColor = isDarkMode ? '#121212' : '#FFFFFF';
-    const linkTextColor = isDarkMode ? 'text-[#FFAA01]' : 'text-[#FFAA01]';
+export default function Dashboard() {
+  const { isDark } = useTheme(); 
+    const iconColor = isDark ? '#FFFFFF' : '#757575';
+    const currentTextColor = isDark ? darkTextColor : lightTextColor;
+    const currentSubTextColor = isDark ? darkSubTextColor : lightSubTextColor;
+    const currentPlaceholderColor = isDark ? darkPlaceholderColor : lightPlaceholderColor;
+    const currentBorderColor = isDark ? darkBorderColor : lightBorderColor;
+    const currentInputBackgroundColor = isDark ? '#1E1E1E' : '#FFFFFF';
+    const currentBackgroundColor = isDark ? '#121212' : '#FFFFFF';
+    const linkTextColor = isDark ? 'text-[#FFAA01]' : 'text-[#FFAA01]';
 
   return (
     <SafeAreaView className={`flex-1 ${isDark ? 'bg-black' : 'bg-white'}`}> 
