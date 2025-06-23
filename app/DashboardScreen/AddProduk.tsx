@@ -19,13 +19,12 @@ import {
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 
 // Impor semua API dan Tipe yang dibutuhkan
-import { masterDataApi, productsApi, usersApi } from '../../lib/api';
-import { KategoriUsaha, ProductPayload, UploaderResponse } from '../../lib/types';
+import { masterDataApi, productsApi, uploaderApi, usersApi } from '../../lib/api';
+import { KategoriUsaha, ProductPayload } from '../../lib/types';
 import { CustomPicker } from '../../components/CustomPicker';
 import PopupTemplate from '../../components/PopUpTemplate';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Context/ThemeContext';
-import axios from 'axios';
 
 // --- HELPER FUNCTIONS ---
 const requestPermission = async (permission: any): Promise<boolean> => {
@@ -90,14 +89,13 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
     }, []);
 
     const handlePickImage = (type: 'camera' | 'gallery') => async () => {
+        // ... (logika permission tidak berubah) ...
         let hasPermission = false;
-        if (type === 'camera') {
-            hasPermission = await requestPermission(PermissionsAndroid.PERMISSIONS.CAMERA);
-        } else {
+        if (type === 'camera') { hasPermission = await requestPermission(PermissionsAndroid.PERMISSIONS.CAMERA); }
+        else {
             const galleryPermission = (Number(Platform.Version) >= 33) ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
             hasPermission = await requestPermission(galleryPermission);
         }
-
         if (!hasPermission) {
             showPopup('warning', 'Akses Ditolak', `Izin akses ${type} diperlukan.`, 'Buka Pengaturan', () => Linking.openSettings());
             return;
@@ -105,7 +103,7 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
 
         const action = type === 'camera' ? launchCamera : launchImageLibrary;
         action({ mediaType: 'photo', quality: 0.7 }, async (response) => {
-            if (response.didCancel || !response.assets || !response.assets[0]) return;
+            if (response.didCancel || !response.assets || !response.assets[0]) {return;}
             if (response.errorCode) {
                 showPopup('error', 'Error', response.errorMessage || `Gagal membuka ${type}.`);
                 return;
@@ -114,39 +112,13 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
             const imageAsset = response.assets[0];
             setIsUploading(true);
             try {
-                const uploaderUrl = 'https://apidl.asepharyana.cloud/api/uploader/ryzencdn';
-                const formData = new FormData();
-                formData.append('file', {
-                    uri: imageAsset.uri,
-                    type: imageAsset.type,
-                    name: imageAsset.fileName,
-                });
-
-                const uploadResponse = await fetch(uploaderUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        // 'Content-Type' TIDAK di-set di sini, biarkan 'fetch' yang membuatkannya
-                    },
-                    body: formData,
-                });
-
-                const result: UploaderResponse = await uploadResponse.json();
-
-                if (!uploadResponse.ok) {
-                    throw new Error(result.url || 'Gagal mengunggah gambar ke server.');
-                }
-
-                if (result.url) {
-                    setFotoUrl(result.url);
-                    console.log("Foto berhasil diunggah:", result.url);
-                } else {
-                    throw new Error('Respons server tidak valid setelah upload.');
-                }
-
+                // Logika fetch yang rumit sekarang ada di dalam satu panggilan fungsi ini
+                const url = await uploaderApi.uploadImage(imageAsset);
+                setFotoUrl(url);
+                console.log('Foto berhasil diunggah:', url);
             } catch (error: any) {
-                console.error("Detail Error Upload:", error);
-                showPopup('error', 'Upload Gagal', 'Tidak dapat terhubung ke server uploader.');
+                console.error('Detail Error Upload:', error);
+                showPopup('error', 'Upload Gagal', error.message);
             } finally {
                 setIsUploading(false);
             }

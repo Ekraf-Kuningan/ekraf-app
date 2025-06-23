@@ -4,8 +4,6 @@ import axios, {AxiosInstance} from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as T from './types';
 import {Asset} from 'react-native-image-picker';
-import {Platform} from 'react-native';
-import RNFS from 'react-native-fs';
 
 const API_BASE_URL = 'https://ekraf.asepharyana.tech/api';
 
@@ -139,56 +137,45 @@ export const authApi = {
 // ===================================
 export const uploaderApi = {
   uploadImage: async (imageAsset: Asset): Promise<string> => {
-    const uploaderUrl = 'http://217.15.165.147:4090/api/uploader';
-    console.log('Memulai proses upload gambar ke:', uploaderUrl);
+    // Gunakan URL yang sudah terbukti bekerja
+    const uploaderUrl = 'https://apidl.asepharyana.cloud/api/uploader/ryzencdn';
 
     if (!imageAsset.uri || !imageAsset.fileName || !imageAsset.type) {
       throw new Error('Data gambar tidak lengkap untuk diunggah.');
     }
-    console.log('Data gambar:', {
-      uri: imageAsset.uri,
-      fileName: imageAsset.fileName,
-      type: imageAsset.type,
-    });
-    // --- LOGIKA BARU UNTUK MEMASTIKAN PATH FILE VALID ---
-    let finalFileUri = imageAsset.uri;
-    if (Platform.OS === 'android' && imageAsset.uri.startsWith('content://')) {
-      try {
-        // Buat path tujuan di direktori cache yang aman
-        const destPath = `${RNFS.CachesDirectoryPath}/${Date.now()}_${imageAsset.fileName}`;
-        console.log('Menyalin file dari URI:', imageAsset.uri);
-        // Salin file dari content URI ke path file yang bisa diakses
-        await RNFS.copyFile(imageAsset.uri, destPath);
-        finalFileUri = `file://${destPath}`;
-        console.log('File disalin ke path baru:', finalFileUri);
-      } catch (copyError) {
-        console.error('Gagal menyalin file:', copyError);
-        throw new Error('Gagal memproses file gambar dari galeri.');
-      }
-    }
-    // --- AKHIR LOGIKA BARU ---
 
     const formData = new FormData();
+    // Nama field 'file' sesuai dokumentasi awal RyzenCDN
     formData.append('file', {
-      uri: finalFileUri, // Gunakan URI yang sudah pasti benar
-      name: imageAsset.fileName,
+      uri: imageAsset.uri,
       type: imageAsset.type,
+      name: imageAsset.fileName,
     });
 
     try {
-      // Kembali menggunakan Axios karena lebih konsisten dengan sisa API kita
-      const response = await axios.post<T.UploaderResponse>(uploaderUrl, formData, {
+      const uploadResponse = await fetch(uploaderUrl, {
+        method: 'POST',
         headers: {
-            'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+          // Content-Type tidak di-set manual
         },
+        body: formData,
       });
 
-      if (response.data && response.data.success) {
-        return response.data.url;
+      const result: T.UploaderResponse = await uploadResponse.json();
+
+      if (!uploadResponse.ok) {
+        // Jika status HTTP bukan 2xx, lempar error dengan pesan dari server
+        throw new Error('Gagal mengunggah gambar ke server.');
+      }
+
+      if (result.url) {
+        return result.url;
       } else {
-        throw new Error('Server merespons tetapi upload ditandai gagal.');
+        throw new Error('Respons server tidak valid setelah upload.');
       }
     } catch (error) {
+      // Teruskan ke handleError untuk penanganan error yang konsisten
       return handleError(error, 'mengunggah gambar');
     }
   },
