@@ -32,7 +32,7 @@ export default function Login({ navigation }: { navigation: any }) {
     theme: 'info' as 'success' | 'error' | 'warning' | 'info',
     title: '',
     message: '',
-    onClose: () => {},
+    onClose: () => { },
     buttonText: 'OK',
   });
 
@@ -42,7 +42,7 @@ export default function Login({ navigation }: { navigation: any }) {
     title: string,
     message: string,
     buttonText: string = 'Mengerti',
-    onCloseAction = () => {}
+    onCloseAction = () => { }
   ) => {
     setPopup({
       visible: true,
@@ -68,7 +68,7 @@ export default function Login({ navigation }: { navigation: any }) {
     try {
       // Panggil fungsi login dari objek authApi
       // Level 'umkm' sudah menjadi default di fungsi API, jadi tidak perlu disertakan
-      const { message } = await authApi.login(email, password);
+      const { message } = await authApi.login({ u: email, p: password });
 
       showPopup(
         'success',

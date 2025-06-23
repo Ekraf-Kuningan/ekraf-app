@@ -25,10 +25,7 @@ export interface PaginatedApiResponse<T> {
 }
 
 export interface UploaderResponse {
-  success: boolean;
   url: string;
-  fileName: string;
-  size: number;
 }
 // ===================================
 // TIPE DATA - AUTH & USERS

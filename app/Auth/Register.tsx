@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { authApi, masterDataApi } from '../../lib/api';
-import { BusinessCategory, RegistrationData } from '../../lib/types';
+import { KategoriUsaha, RegistrationData } from '../../lib/types';
 import { CustomPicker } from '../../components/CustomPicker'; // Pastikan path benar
 import PopupTemplate from '../../components/PopUpTemplate'; // <-- Impor PopupTemplate
 import { useTheme } from '../Context/ThemeContext';
@@ -27,7 +27,7 @@ export default function Register({ navigation }: { navigation: any }) {
   const [status_usaha, setStatusUsaha] = useState<'BARU' | 'SUDAH_LAMA' | null>(null);
   const [id_kategori_usaha, setIdKategoriUsaha] = useState<number | null>(null);
 
-  const [businessCategories, setBusinessCategories] = useState<BusinessCategory[]>([]);
+  const [businessCategories, setBusinessCategories] = useState<KategoriUsaha[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);

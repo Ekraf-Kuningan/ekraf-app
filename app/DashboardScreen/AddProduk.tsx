@@ -2,29 +2,30 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  StatusBar,
-  PermissionsAndroid,
-  Platform,
-  Linking,
-  ActionSheetIOS,
-  ActivityIndicator,
-  Alert,
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    Image,
+    StatusBar,
+    PermissionsAndroid,
+    Platform,
+    Linking,
+    ActionSheetIOS,
+    ActivityIndicator,
+    Alert,
 } from 'react-native';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 
 // Impor semua API dan Tipe yang dibutuhkan
-import { masterDataApi, productsApi, usersApi, uploaderApi } from '../../lib/api';
-import { KategoriUsaha, ProductPayload } from '../../lib/types';
+import { masterDataApi, productsApi, usersApi } from '../../lib/api';
+import { KategoriUsaha, ProductPayload, UploaderResponse } from '../../lib/types';
 import { CustomPicker } from '../../components/CustomPicker';
 import PopupTemplate from '../../components/PopUpTemplate';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Context/ThemeContext';
+import axios from 'axios';
 
 // --- HELPER FUNCTIONS ---
 const requestPermission = async (permission: any): Promise<boolean> => {
@@ -57,12 +58,12 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
         theme: 'info' as 'success' | 'error' | 'warning' | 'info',
         title: '',
         message: '',
-        onClose: () => {},
+        onClose: () => { },
         buttonText: 'OK',
     });
 
     // --- HELPER & LOGIC ---
-    const showPopup = (theme: 'success' | 'error' | 'warning' | 'info', title: string, message: string, buttonText: string = 'Mengerti', onCloseAction = () => {}) => {
+    const showPopup = (theme: 'success' | 'error' | 'warning' | 'info', title: string, message: string, buttonText: string = 'Mengerti', onCloseAction = () => { }) => {
         setPopup({ visible: true, theme, title, message, buttonText, onClose: () => { setPopup(p => ({ ...p, visible: false })); onCloseAction(); } });
     };
 
@@ -73,9 +74,9 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
                     masterDataApi.getBusinessCategories(),
                     usersApi.getOwnProfile(),
                 ]);
-                
+
                 setBusinessCategories(fetchedCategories);
-                
+
                 if (userProfile && userProfile.nama_user) {
                     setNamaPelaku(userProfile.nama_user);
                 }
@@ -98,27 +99,54 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
         }
 
         if (!hasPermission) {
-            showPopup('warning', 'Akses Ditolak', `Izin akses ${type} diperlukan. Mohon aktifkan di pengaturan aplikasi.`, 'Buka Pengaturan', () => Linking.openSettings());
+            showPopup('warning', 'Akses Ditolak', `Izin akses ${type} diperlukan.`, 'Buka Pengaturan', () => Linking.openSettings());
             return;
         }
 
         const action = type === 'camera' ? launchCamera : launchImageLibrary;
-        action({ mediaType: 'photo', quality: 0.7, saveToPhotos: type === 'camera' }, async (response) => {
-            if (response.didCancel || !response.assets || !response.assets[0]) {
-                return;
-            }
+        action({ mediaType: 'photo', quality: 0.7 }, async (response) => {
+            if (response.didCancel || !response.assets || !response.assets[0]) return;
             if (response.errorCode) {
                 showPopup('error', 'Error', response.errorMessage || `Gagal membuka ${type}.`);
                 return;
             }
-            
+
             const imageAsset = response.assets[0];
             setIsUploading(true);
             try {
-                const url = await uploaderApi.uploadImage(imageAsset);
-                setFotoUrl(url);
+                const uploaderUrl = 'http://217.15.165.147:4090/api/uploader';
+                const formData = new FormData();
+                formData.append('file', {
+                    uri: imageAsset.uri,
+                    type: imageAsset.type,
+                    name: imageAsset.fileName,
+                });
+
+                const uploadResponse = await fetch(uploaderUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        // 'Content-Type' TIDAK di-set di sini, biarkan 'fetch' yang membuatkannya
+                    },
+                    body: formData,
+                });
+
+                const result: UploaderResponse = await uploadResponse.json();
+
+                if (!uploadResponse.ok) {
+                    throw new Error(result.url || 'Gagal mengunggah gambar ke server.');
+                }
+
+                if (result.url) {
+                    setFotoUrl(result.url);
+                    console.log("Foto berhasil diunggah:", result.url);
+                } else {
+                    throw new Error('Respons server tidak valid setelah upload.');
+                }
+
             } catch (error: any) {
-                showPopup('error', 'Upload Gagal', 'Gagal mengunggah gambar ke server.');
+                console.error("Detail Error Upload:", error);
+                showPopup('error', 'Upload Gagal', 'Tidak dapat terhubung ke server uploader.');
             } finally {
                 setIsUploading(false);
             }
@@ -126,11 +154,11 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
     };
 
     const showImagePickerOptions = () => {
-        if (isUploading) {return;}
+        if (isUploading) { return; }
         if (Platform.OS === 'ios') {
             ActionSheetIOS.showActionSheetWithOptions({ options: ['Batal', 'Buka Kamera', 'Pilih dari Galeri'], cancelButtonIndex: 0 }, (buttonIndex) => {
-                if (buttonIndex === 1) {handlePickImage('camera')();}
-                if (buttonIndex === 2) {handlePickImage('gallery')();}
+                if (buttonIndex === 1) { handlePickImage('camera')(); }
+                if (buttonIndex === 2) { handlePickImage('gallery')(); }
             });
         } else {
             Alert.alert('Pilih Sumber Foto', '', [{ text: 'Kamera', onPress: handlePickImage('camera') }, { text: 'Galeri', onPress: handlePickImage('gallery') }, { text: 'Batal', style: 'cancel' }]);
@@ -174,7 +202,7 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
     return (
         <View className="flex-1 bg-white dark:bg-zinc-900">
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'} />
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+            <ScrollView className="flex-grow" keyboardShouldPersistTaps="handled">
                 <View className="flex-row items-center p-4 border-b border-gray-200 dark:border-zinc-800">
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Icon name="arrow-back-outline" size={28} color={isDark ? '#fff' : '#222'} />
@@ -184,7 +212,7 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
 
                 <View className="p-5">
                     <Text className={labelStyle}>Nama Produk</Text>
-                    <TextInput className={inputStyle} placeholder="Contoh: Keripik Singkong Pedas" placeholderTextColor={placeholderTextColor} value={namaProduk} onChangeText={setNamaProduk}/>
+                    <TextInput className={inputStyle} placeholder="Contoh: Keripik Singkong Pedas" placeholderTextColor={placeholderTextColor} value={namaProduk} onChangeText={setNamaProduk} />
 
                     <Text className={labelStyle}>Kategori Produk</Text>
                     <CustomPicker
@@ -203,17 +231,17 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
                         value={deskripsi}
                         onChangeText={setDeskripsi}
                         multiline
-                        style={{ textAlignVertical: 'top' }}
+                        textAlignVertical="top"
                     />
 
                     <Text className={labelStyle}>Stok Awal</Text>
-                    <TextInput className={inputStyle} placeholder="Contoh: 100" placeholderTextColor={placeholderTextColor} value={stok} onChangeText={setStok} keyboardType="number-pad"/>
+                    <TextInput className={inputStyle} placeholder="Contoh: 100" placeholderTextColor={placeholderTextColor} value={stok} onChangeText={setStok} keyboardType="number-pad" />
 
                     <Text className={labelStyle}>Harga Jual (Rp)</Text>
-                    <TextInput className={inputStyle} placeholder="Contoh: 15000" placeholderTextColor={placeholderTextColor} value={harga} onChangeText={setHarga} keyboardType="number-pad"/>
+                    <TextInput className={inputStyle} placeholder="Contoh: 15000" placeholderTextColor={placeholderTextColor} value={harga} onChangeText={setHarga} keyboardType="number-pad" />
 
                     <Text className={labelStyle}>Nomor HP (Opsional)</Text>
-                    <TextInput className={inputStyle} placeholder="Contoh: 081234567890" placeholderTextColor={placeholderTextColor} value={nohp} onChangeText={setNohp} keyboardType="phone-pad"/>
+                    <TextInput className={inputStyle} placeholder="Contoh: 081234567890" placeholderTextColor={placeholderTextColor} value={nohp} onChangeText={setNohp} keyboardType="phone-pad" />
 
                     {/* ================================================== */}
                     {/* === BAGIAN FOTO PRODUK DENGAN GAYA SEBELUMNYA === */}
@@ -225,10 +253,10 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
                     {fotoUrl && (
                         <View className="mb-4 items-center">
                             <View className="bg-white dark:bg-zinc-800 rounded-xl shadow-md p-2 w-36 h-36 justify-center items-center border border-gray-200 dark:border-zinc-700">
-                                <Image 
-                                    source={{ uri: fotoUrl }} 
+                                <Image
+                                    source={{ uri: fotoUrl }}
                                     className="w-full h-full rounded-lg"
-                                    resizeMode="cover" 
+                                    resizeMode="cover"
                                 />
                             </View>
                         </View>
@@ -248,7 +276,7 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
                             </Text>
                         )}
                     </TouchableOpacity>
-                    
+
                     {/* ================================================ */}
 
                     <TouchableOpacity className="bg-[#FFAA01] rounded-lg py-4 mb-8 items-center active:opacity-80" onPress={handleSimpanProduk} disabled={isLoading || isLoadingData || isUploading}>
