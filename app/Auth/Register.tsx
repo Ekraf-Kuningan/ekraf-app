@@ -115,10 +115,16 @@ export default function Register({ navigation }: { navigation: any }) {
       // Mengganti Alert sukses dengan Popup dan navigasi di onClose
       showPopup(
         'success',
-        'Pendaftaran Berhasil',
+        'Silahkan cek email untuk verifikasi',
         response.message,
-        'Lanjutkan ke Login',
-        () => navigation.navigate('Login')
+        'Buka Gmail',
+        () => {
+          // Buka aplikasi Gmail jika tersedia, lalu navigasi ke Login
+          import('react-native').then(({ Linking }) => {
+            Linking.openURL('https://gmail.app.goo.gl');
+            navigation.navigate('Login');
+          });
+        }
       );
     } catch (error: any) {
       // Mengganti Alert gagal dengan Popup
