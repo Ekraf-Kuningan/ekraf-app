@@ -2,6 +2,7 @@
 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PasswordResetResponse, LoginResponse, RegistrationData, RegisterResponse, BusinessCategory } from './types';
 
 // Base URL tetap sama
 const API_BASE_URL = 'https://ekraf.asepharyana.tech/api';
@@ -9,47 +10,15 @@ const API_BASE_URL = 'https://ekraf.asepharyana.tech/api';
 // --- INTERFACE & TIPE DATA (TERPUSAT) ---
 
 // Interface dari Login (sebelumnya)
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-interface LoginResponse {
-  message: string;
-  token: string;
-  user: User;
-}
 
-// Interface BARU untuk Register
-export interface BusinessCategory {
-  id_kategori_usaha: number;
-  nama_kategori: string;
-}
-
-export interface RegistrationData {
-  nama_user: string;
-  username: string;
-  email: string;
-  password: string;
-  jk: 'Laki-laki' | 'Perempuan';
-  nohp: string;
-  nama_usaha: string;
-  status_usaha: 'BARU' | 'SUDAH_LAMA';
-  id_kategori_usaha: string; // API mengharapkan string
-}
-
-interface RegisterResponse {
-    success: boolean;
-    message: string;
-    // tambahkan properti lain jika ada
-}
-interface PasswordResetResponse {
-    success: boolean;
-    message: string;
-}
 
 // --- FUNGSI API (AUTH) ---
-
+/**
+ * Fungsi BARU untuk meminta reset password.
+ * @param email - Alamat email pengguna yang terdaftar.
+ * @returns Object yang berisi pesan sukses jika berhasil.
+ * @throws Melemparkan Error dengan pesan spesifik jika gagal.
+ */
 export const requestPasswordReset = async (email: string) => {
     try {
         const response = await axios.post<PasswordResetResponse>(`${API_BASE_URL}/auth/forgot-password`, {

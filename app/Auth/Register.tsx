@@ -5,9 +5,10 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 // Impor fungsi dan tipe dari file api.ts
-import { registerUser, fetchBusinessCategories, BusinessCategory, RegistrationData } from '../../lib/api'; // <-- PASTIKAN PATH INI BENAR
+import { registerUser, fetchBusinessCategories } from '../../lib/api'; // <-- PASTIKAN PATH INI BENAR
 import { CustomPicker } from '../../components/CustomPicker';
 import { useTheme } from '../Context/ThemeContext';
+import { BusinessCategory, RegistrationData } from '../../lib/types';
 
 
 // --- KOMPONEN UTAMA REGISTER ---
@@ -27,7 +28,7 @@ export default function Register({ navigation }: { navigation: any }) {
 
   const [businessCategories, setBusinessCategories] = useState<BusinessCategory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingCategories, setIsLoadingCategories] = useState(true); // State untuk loading kategori
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 

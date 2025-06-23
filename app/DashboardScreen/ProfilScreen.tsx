@@ -3,14 +3,17 @@ import { View, Text, TouchableOpacity, StatusBar, ActivityIndicator, Alert } fro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import type { NavigationProp } from '@react-navigation/native';
 import { useTheme } from '../Context/ThemeContext';
+import { User } from '../../lib/types';
+
 
 const ProfileScreen = () => {
   const { isDark } = useTheme();
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<any>>();
 
   useFocusEffect(
     useCallback(() => {
@@ -123,5 +126,5 @@ const ProfileScreen = () => {
     </View>
   );
 };
-
 export default ProfileScreen;
+
