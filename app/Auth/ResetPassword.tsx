@@ -28,7 +28,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => { // Nama 
     theme: 'info' as 'success' | 'error' | 'warning' | 'info',
     title: '',
     message: '',
-    onClose: () => {},
+    onClose: () => { },
     buttonText: 'OK',
   });
 
@@ -37,7 +37,7 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => { // Nama 
     title: string,
     message: string,
     buttonText: string = 'Mengerti',
-    onCloseAction = () => {}
+    onCloseAction = () => { }
   ) => {
     setPopup({
       visible: true,
@@ -68,10 +68,15 @@ const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => { // Nama 
       // Gunakan PopupTemplate untuk pesan sukses
       showPopup(
         'success',
-        'Permintaan Terkirim',
+        'Permintaan Terkirim,silakan periksa email Anda dan reset kata sandi Anda.',
         response.message,
-        'Selesai',
-        () => navigation.goBack() // Aksi navigasi setelah popup ditutup
+        'Buka Gmail',
+        () => {
+          import('react-native').then(({ Linking }) => {
+            Linking.openURL('https://gmail.app.goo.gl');
+            navigation.navigate('Login');
+          });
+        } // Aksi navigasi setelah popup ditutup
       );
 
     } catch (error: any) {

@@ -150,7 +150,7 @@ export default function Login({ navigation }: { navigation: any }) {
         </View>
 
         {/* Lupa Kata Sandi */}
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} className="self-end mt-2 mb-5">
+        <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')} className="self-end mt-2 mb-5">
           <Text className="font-p-medium text-xs text-[#FFAA01]">Lupa Kata Sandi?</Text>
         </TouchableOpacity>
       </View>

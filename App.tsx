@@ -132,7 +132,7 @@ function MainTabNavigator() {
         {() => <FadeScreen><DashboardScreen /></FadeScreen>}
       </Tab.Screen>
       <Tab.Screen name="Add Produk" options={{ tabBarIcon: AddProdukTabBarIcon }}>
-        {() => <FadeScreen><AddProdukScreen /></FadeScreen>}
+        {() => <FadeScreen><AddProdukScreen navigation={undefined} /></FadeScreen>}
       </Tab.Screen>
       <Tab.Screen name="Profil" options={{ tabBarIcon: ProfileTabBarIcon }}>
         {() => <FadeScreen><ProfileScreen /></FadeScreen>}
