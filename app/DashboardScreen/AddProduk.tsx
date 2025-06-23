@@ -1,244 +1,262 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Image, useColorScheme, StatusBar, PermissionsAndroid, Platform, Alert, Linking, ActionSheetIOS } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+// src/screens/product/PendaftaranProdukScreen.tsx
+
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+  StatusBar,
+  PermissionsAndroid,
+  Platform,
+  Linking,
+  ActionSheetIOS,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
+
+// Impor semua API dan Tipe yang dibutuhkan
+import { masterDataApi, productsApi, usersApi, uploaderApi } from '../../lib/api';
+import { KategoriUsaha, ProductPayload } from '../../lib/types';
+import { CustomPicker } from '../../components/CustomPicker';
+import PopupTemplate from '../../components/PopUpTemplate';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Context/ThemeContext';
-import { StyleSheet } from 'react-native';
 
-const requestGalleryPermission = async () => {
-  try {
+// --- HELPER FUNCTIONS ---
+const requestPermission = async (permission: any): Promise<boolean> => {
     if (Platform.OS === 'android') {
-      if (Platform.Version >= 33) {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          return true;
-        }
-      } else {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-        );
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          return true;
-        }
-      }
-
-      Alert.alert(
-        'Akses Ditolak',
-        'Akses galeri ditolak. Silakan aktifkan permission di pengaturan aplikasi.',
-        [
-          { text: 'Buka Pengaturan', onPress: () => Linking.openSettings() },
-          { text: 'Batal', style: 'cancel' },
-        ]
-      );
-      return false;
+        const granted = await PermissionsAndroid.request(permission);
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
-    return true;
-  } catch (e) {
-    Alert.alert('Error', 'Gagal meminta permission: ' + e);
-    return false;
-  }
+    return true; // di iOS, izin ditangani via Info.plist
 };
 
-const requestCameraPermission = async () => {
-  if (Platform.OS === 'android') {
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA
-    );
-    return granted === PermissionsAndroid.RESULTS.GRANTED;
-  }
-  return true;
-};
+// --- MAIN COMPONENT ---
+export default function PendaftaranProdukScreen({ navigation }: { navigation: any }) {
+    const { isDark } = useTheme();
 
-const kategoriList = [
-  'Makanan',
-  'Kerajinan',
-  'Fashion',
-  'Aksesoris',
-  'Kecantikan',
-  'Elektronik',
-  'Lainnya',
-];
-
-const styles = StyleSheet.create({
-  contentContainer: {
-    flexGrow: 1,
-  },
-   dropdownContainer: {
-    top: 230,
-  },
-});
-
-export default function PendaftaranProduk() {
-  const { isDark } = useTheme();
-  const currentPlaceholderColor = isDark ? '#777' : '#888';
-
-  const [namaBarang, setNamaBarang] = useState('');
-  const [kategori, setKategori] = useState('');
-  const [kodeBarang, setKodeBarang] = useState('');
-  const [stokAwal, setStokAwal] = useState('');
-  const [harga, setHarga] = useState('');
-  const [hargaJual, setHargaJual] = useState('');
-  const [foto, setFoto] = useState<string | null>(null);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [showKategoriDropdown, setShowKategoriDropdown] = useState(false);
-
-  const handlePickImage = () => {
-    setShowDropdown(true);
-  };
-
-  const handlePickFromGallery = async () => {
-    setShowDropdown(false);
-    const allowed = await requestGalleryPermission();
-    if (!allowed) {
-      Alert.alert('Permission ditolak', 'Akses galeri diperlukan untuk memilih foto.');
-      return;
-    }
-    launchImageLibrary({ mediaType: 'photo', quality: 1 }, (response) => {
-      if (response.assets && response.assets.length > 0) {
-        setFoto(response.assets[0].uri || null);
-      }
+    // --- STATES ---
+    const [namaPelaku, setNamaPelaku] = useState('');
+    const [namaProduk, setNamaProduk] = useState('');
+    const [nohp, setNohp] = useState('');
+    const [idKategoriUsaha, setIdKategoriUsaha] = useState<number | null>(null);
+    const [stok, setStok] = useState('');
+    const [harga, setHarga] = useState('');
+    const [deskripsi, setDeskripsi] = useState('');
+    const [fotoUrl, setFotoUrl] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [businessCategories, setBusinessCategories] = useState<KategoriUsaha[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingData, setIsLoadingData] = useState(true);
+    const [popup, setPopup] = useState({
+        visible: false,
+        theme: 'info' as 'success' | 'error' | 'warning' | 'info',
+        title: '',
+        message: '',
+        onClose: () => {},
+        buttonText: 'OK',
     });
-  };
 
-  const handlePickFromCamera = async () => {
-    setShowDropdown(false);
-    const allowed = await requestCameraPermission();
-    if (!allowed) {
-      Alert.alert('Permission ditolak', 'Akses kamera diperlukan untuk mengambil foto.');
-      return;
-    }
-    launchCamera({ mediaType: 'photo', quality: 1 }, (response) => {
-      if (response.assets && response.assets.length > 0) {
-        setFoto(response.assets[0].uri || null);
-      }
-    });
-  };
-  return (
-    <>
-      <ScrollView className={'flex-1 bg-white dark:bg-[#18181b]'} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
-        <StatusBar
-          barStyle={isDark ? 'light-content' : 'dark-content'}
-          backgroundColor={isDark ? '#18181b' : '#fff'}
-        />
-        <ScrollView className={'flex-1 bg-white dark:bg-[#18181b]'} contentContainerStyle={styles.contentContainer} keyboardShouldPersistTaps="handled">
-          {/* Header */}
-          <View className="flex-row items-center px-4 pt-4 mb-2">
-            <TouchableOpacity className="mr-2">
-              <Icon name="arrow-back-outline" size={24} color={isDark ? '#fff' : '#222'} />
-            </TouchableOpacity>
-          </View>
+    // --- HELPER & LOGIC ---
+    const showPopup = (theme: 'success' | 'error' | 'warning' | 'info', title: string, message: string, buttonText: string = 'Mengerti', onCloseAction = () => {}) => {
+        setPopup({ visible: true, theme, title, message, buttonText, onClose: () => { setPopup(p => ({ ...p, visible: false })); onCloseAction(); } });
+    };
 
-          {/* Form */}
-          <View className="px-8 pt-8 mt-10">
-            <View className="flex-row items-center mb-6">
-              <Image source={require('../../assets/images/ekraf.png')} className="w-28 mr-3" />
-              <Text className="text-4xl font-poppins-bold text-black dark:text-white">Pendaftaran {'\n'}Barang</Text>
-            </View>
+    useEffect(() => {
+        const loadInitialData = async () => {
+            try {
+                const [fetchedCategories, userProfile] = await Promise.all([
+                    masterDataApi.getBusinessCategories(),
+                    usersApi.getOwnProfile(),
+                ]);
+                
+                setBusinessCategories(fetchedCategories);
+                
+                if (userProfile && userProfile.nama_user) {
+                    setNamaPelaku(userProfile.nama_user);
+                }
+            } catch (error: any) {
+                showPopup('error', 'Gagal Memuat Data', 'Tidak dapat mengambil data awal. Silakan coba lagi.');
+            } finally {
+                setIsLoadingData(false);
+            }
+        };
+        loadInitialData();
+    }, []);
 
-            <Text className="text-sm font-semibold mb-1 text-black dark:text-white">Nama Barang</Text>
-            <TextInput
-              className="border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 mb-3 text-[15px] bg-[#fafafa] dark:bg-[#232323] text-black dark:text-white"
-              placeholder="Masukkan nama barang disini"
-              placeholderTextColor={currentPlaceholderColor}
-              value={namaBarang}
-              onChangeText={setNamaBarang}
-            />
+    const handlePickImage = (type: 'camera' | 'gallery') => async () => {
+        let hasPermission = false;
+        if (type === 'camera') {
+            hasPermission = await requestPermission(PermissionsAndroid.PERMISSIONS.CAMERA);
+        } else {
+            const galleryPermission = (Number(Platform.Version) >= 33) ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+            hasPermission = await requestPermission(galleryPermission);
+        }
 
-            <Text className="text-sm font-semibold mb-1 text-black dark:text-white">Kategori</Text>
-            <TouchableOpacity
-              className="border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 mb-3 bg-[#fafafa] dark:bg-[#232323] flex-row items-center justify-between"
-              onPress={() => setShowKategoriDropdown(!showKategoriDropdown)}
-              activeOpacity={0.8}
-            >
-              <Text className={`text-[15px] ${kategori ? 'text-black dark:text-white' : 'text-gray-400 dark:text-gray-500'}`}>{kategori || 'Pilih kategori'}</Text>
-              <Icon name={showKategoriDropdown ? 'chevron-up' : 'chevron-down'} size={20} color={isDark ? '#fff' : '#222'} />
-            </TouchableOpacity>
-            {showKategoriDropdown && (
-              <View className="absolute left-0 right-0 z-50 px-8" style={styles.dropdownContainer}>
-                <View className="bg-white dark:bg-[#232323] rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                  {kategoriList.map((item) => (
-                    <TouchableOpacity
-                      key={item}
-                      className="py-3 px-4 border-b border-gray-100 dark:border-gray-700"
-                      onPress={() => {
-                        setKategori(item);
-                        setShowKategoriDropdown(false);
-                      }}
-                    >
-                      <Text className={`text-[15px] ${kategori === item ? 'font-bold text-[#FFAA01]' : 'text-black dark:text-white'}`}>{item}</Text>
+        if (!hasPermission) {
+            showPopup('warning', 'Akses Ditolak', `Izin akses ${type} diperlukan. Mohon aktifkan di pengaturan aplikasi.`, 'Buka Pengaturan', () => Linking.openSettings());
+            return;
+        }
+
+        const action = type === 'camera' ? launchCamera : launchImageLibrary;
+        action({ mediaType: 'photo', quality: 0.7, saveToPhotos: type === 'camera' }, async (response) => {
+            if (response.didCancel || !response.assets || !response.assets[0]) {
+                return;
+            }
+            if (response.errorCode) {
+                showPopup('error', 'Error', response.errorMessage || `Gagal membuka ${type}.`);
+                return;
+            }
+            
+            const imageAsset = response.assets[0];
+            setIsUploading(true);
+            try {
+                const url = await uploaderApi.uploadImage(imageAsset);
+                setFotoUrl(url);
+            } catch (error: any) {
+                showPopup('error', 'Upload Gagal', 'Gagal mengunggah gambar ke server.');
+            } finally {
+                setIsUploading(false);
+            }
+        });
+    };
+
+    const showImagePickerOptions = () => {
+        if (isUploading) {return;}
+        if (Platform.OS === 'ios') {
+            ActionSheetIOS.showActionSheetWithOptions({ options: ['Batal', 'Buka Kamera', 'Pilih dari Galeri'], cancelButtonIndex: 0 }, (buttonIndex) => {
+                if (buttonIndex === 1) {handlePickImage('camera')();}
+                if (buttonIndex === 2) {handlePickImage('gallery')();}
+            });
+        } else {
+            Alert.alert('Pilih Sumber Foto', '', [{ text: 'Kamera', onPress: handlePickImage('camera') }, { text: 'Galeri', onPress: handlePickImage('gallery') }, { text: 'Batal', style: 'cancel' }]);
+        }
+    };
+
+    const handleSimpanProduk = async () => {
+        if (!namaProduk || !namaPelaku || idKategoriUsaha === null || !stok || !harga || !fotoUrl) {
+            showPopup('warning', 'Data Tidak Lengkap', 'Nama produk, kategori, stok, harga, dan foto wajib diisi.');
+            return;
+        }
+
+        setIsLoading(true);
+
+        const productPayload: ProductPayload = {
+            nama_produk: namaProduk,
+            nama_pelaku: namaPelaku,
+            id_kategori_usaha: idKategoriUsaha,
+            stok: parseInt(stok, 10) || 0,
+            harga: parseInt(harga, 10) || 0,
+            deskripsi: deskripsi,
+            nohp: nohp,
+            gambar: fotoUrl,
+        };
+
+        try {
+            await productsApi.create(productPayload);
+            showPopup('success', 'Berhasil!', 'Produk Anda telah berhasil didaftarkan.', 'Selesai', () => navigation.goBack());
+        } catch (error: any) {
+            showPopup('error', 'Gagal Menyimpan', error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // --- STYLING CONSTANTS ---
+    const placeholderTextColor = isDark ? '#777' : '#888';
+    const inputStyle = `border rounded-lg px-4 py-3 mb-4 text-base ${isDark ? 'border-gray-700 bg-zinc-800 text-white' : 'border-gray-300 bg-gray-50 text-black'}`;
+    const labelStyle = `text-sm font-semibold mb-2 ${isDark ? 'text-gray-200' : 'text-gray-800'}`;
+
+    return (
+        <View className="flex-1 bg-white dark:bg-zinc-900">
+            <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'} />
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+                <View className="flex-row items-center p-4 border-b border-gray-200 dark:border-zinc-800">
+                    <TouchableOpacity onPress={() => navigation.goBack()}>
+                        <Icon name="arrow-back-outline" size={28} color={isDark ? '#fff' : '#222'} />
                     </TouchableOpacity>
-                  ))}
+                    <Text className="text-xl font-semibold ml-4 text-black dark:text-white">Tambah Produk Baru</Text>
                 </View>
-              </View>
-            )}
 
-            <Text className="text-sm font-semibold mb-1 text-black dark:text-white">Stok Awal</Text>
-            <TextInput
-              className="border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 mb-3 text-[15px] bg-[#fafafa] dark:bg-[#232323] text-black dark:text-white"
-              placeholder="Masukkan stok awal disini"
-              placeholderTextColor={currentPlaceholderColor}
-              value={stokAwal}
-              onChangeText={setStokAwal}
-              keyboardType="numeric"
-            />
+                <View className="p-5">
+                    <Text className={labelStyle}>Nama Produk</Text>
+                    <TextInput className={inputStyle} placeholder="Contoh: Keripik Singkong Pedas" placeholderTextColor={placeholderTextColor} value={namaProduk} onChangeText={setNamaProduk}/>
 
-            <Text className="text-sm font-semibold mb-1 text-black dark:text-white">Harga</Text>
-            <TextInput
-              className="border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 mb-3 text-[15px] bg-[#fafafa] dark:bg-[#232323] text-black dark:text-white"
-              placeholder="Masukkan harga disini"
-              placeholderTextColor={currentPlaceholderColor}
-              value={harga}
-              onChangeText={setHarga}
-              keyboardType="numeric"
-            />
+                    <Text className={labelStyle}>Kategori Produk</Text>
+                    <CustomPicker
+                        items={businessCategories.map(cat => ({ label: cat.nama_kategori, value: cat.id_kategori_usaha }))}
+                        selectedValue={idKategoriUsaha}
+                        onValueChange={setIdKategoriUsaha}
+                        placeholder={isLoadingData ? 'Memuat kategori...' : 'Pilih kategori produk'}
+                        disabled={isLoadingData}
+                    />
 
-            <Text className="text-sm font-semibold mb-1 text-black dark:text-white">Harga Jual</Text>
-            <TextInput
-              className="border border-gray-300 dark:border-gray-700 rounded-lg px-4 py-3 mb-3 text-[15px] bg-[#fafafa] dark:bg-[#232323] text-black dark:text-white"
-              placeholder="Masukkan harga jual disini"
-              placeholderTextColor={currentPlaceholderColor}
-              value={hargaJual}
-              onChangeText={setHargaJual}
-              keyboardType="numeric"
-            />
+                    <Text className={labelStyle}>Deskripsi (Opsional)</Text>
+                    <TextInput
+                        className={`${inputStyle} h-24`}
+                        placeholder="Jelaskan keunikan produk Anda..."
+                        placeholderTextColor={placeholderTextColor}
+                        value={deskripsi}
+                        onChangeText={setDeskripsi}
+                        multiline
+                        style={{ textAlignVertical: 'top' }}
+                    />
 
-            <Text className="text-sm font-semibold mb-1 text-black dark:text-white">Foto Barang</Text>
-            {foto && (
-              <View className="mb-4 items-center">
-                <View className="bg-white dark:bg-[#232323] rounded-xl shadow p-2 w-36 h-36 justify-center items-center border border-gray-200 dark:border-gray-700 mb-2">
-                  <Image source={{ uri: foto }} className="w-32 h-32 rounded-lg" resizeMode="cover" />
+                    <Text className={labelStyle}>Stok Awal</Text>
+                    <TextInput className={inputStyle} placeholder="Contoh: 100" placeholderTextColor={placeholderTextColor} value={stok} onChangeText={setStok} keyboardType="number-pad"/>
+
+                    <Text className={labelStyle}>Harga Jual (Rp)</Text>
+                    <TextInput className={inputStyle} placeholder="Contoh: 15000" placeholderTextColor={placeholderTextColor} value={harga} onChangeText={setHarga} keyboardType="number-pad"/>
+
+                    <Text className={labelStyle}>Nomor HP (Opsional)</Text>
+                    <TextInput className={inputStyle} placeholder="Contoh: 081234567890" placeholderTextColor={placeholderTextColor} value={nohp} onChangeText={setNohp} keyboardType="phone-pad"/>
+
+                    {/* ================================================== */}
+                    {/* === BAGIAN FOTO PRODUK DENGAN GAYA SEBELUMNYA === */}
+                    {/* ================================================== */}
+
+                    <Text className={labelStyle}>Foto Produk</Text>
+
+                    {/* Area Pratinjau Gambar, hanya muncul jika fotoUrl ada */}
+                    {fotoUrl && (
+                        <View className="mb-4 items-center">
+                            <View className="bg-white dark:bg-zinc-800 rounded-xl shadow-md p-2 w-36 h-36 justify-center items-center border border-gray-200 dark:border-zinc-700">
+                                <Image 
+                                    source={{ uri: fotoUrl }} 
+                                    className="w-full h-full rounded-lg"
+                                    resizeMode="cover" 
+                                />
+                            </View>
+                        </View>
+                    )}
+
+                    {/* Tombol Aksi untuk Unggah atau Ganti Foto */}
+                    <TouchableOpacity
+                        onPress={showImagePickerOptions}
+                        className="bg-gray-200 dark:bg-zinc-700 rounded-lg py-3 mb-6 items-center active:opacity-80"
+                        disabled={isUploading}
+                    >
+                        {isUploading ? (
+                            <ActivityIndicator size="small" color={isDark ? '#FFFFFF' : '#000000'} />
+                        ) : (
+                            <Text className="text-black dark:text-white font-semibold">
+                                {fotoUrl ? 'Ganti Foto' : 'Unggah Foto'}
+                            </Text>
+                        )}
+                    </TouchableOpacity>
+                    
+                    {/* ================================================ */}
+
+                    <TouchableOpacity className="bg-[#FFAA01] rounded-lg py-4 mb-8 items-center active:opacity-80" onPress={handleSimpanProduk} disabled={isLoading || isLoadingData || isUploading}>
+                        {(isLoading || isUploading) ? <ActivityIndicator color="#FFFFFF" /> : <Text className="text-white font-bold text-base">Simpan Produk</Text>}
+                    </TouchableOpacity>
                 </View>
-              </View>
-            )}
-            <TouchableOpacity className="bg-gray-300 dark:bg-gray-700 rounded-lg py-3 mb-6 items-center" onPress={handlePickImage}>
-              <Text className="text-gray-700 dark:text-gray-200 font-semibold">Unggah Foto</Text>
-            </TouchableOpacity>
-            {showDropdown && (
-              <View className="absolute left-0 right-0 bottom-0 top-0 bg-black/30 justify-center items-center z-50">
-                <View className="bg-white dark:bg-[#232323] rounded-xl p-5 w-64 shadow-lg">
-                  <Text className="text-base font-bold mb-4 text-black dark:text-white text-center">Pilih Sumber Foto</Text>
-                  <TouchableOpacity className="py-3 border-b border-gray-200 dark:border-gray-700" onPress={handlePickFromGallery}>
-                    <Text className="text-center text-black dark:text-white">Galeri</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity className="py-3" onPress={handlePickFromCamera}>
-                    <Text className="text-center text-black dark:text-white">Kamera</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity className="mt-4 py-2 rounded bg-gray-200 dark:bg-gray-700" onPress={() => setShowDropdown(false)}>
-                    <Text className="text-center text-gray-700 dark:text-gray-200">Batal</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
-
-            <TouchableOpacity className="bg-[#FFAA01] rounded-lg py-3 mb-8 items-center" onPress={() => console.log('Simpan Produk')}>
-              <Text className="text-white font-bold text-base">Simpan</Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </ScrollView>
-    </>
-  );
+            </ScrollView>
+            <PopupTemplate visible={popup.visible} onClose={popup.onClose} theme={popup.theme} title={popup.title} message={popup.message} buttonText={popup.buttonText} />
+        </View>
+    );
 }

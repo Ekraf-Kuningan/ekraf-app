@@ -1,9 +1,38 @@
 // lib/types.ts
 
 // ===================================
-// TIPE DATA - AUTH
+// TIPE DATA - GENERIC & PAGINASI
 // ===================================
+// Wrapper standar untuk respons API yang mengembalikan data tunggal atau array
+export interface ApiResponse<T> {
+  message: string;
+  data: T;
+  success?: boolean;
+}
 
+// Wrapper untuk respons yang hanya berisi pesan (cth: delete)
+export interface ApiMessageResponse {
+    message: string;
+    success?: boolean;
+}
+
+// Wrapper untuk respons dengan paginasi
+export interface PaginatedApiResponse<T> {
+  message: string;
+  totalPages: number;
+  currentPage: number;
+  data: T;
+}
+
+export interface UploaderResponse {
+  success: boolean;
+  url: string;
+  fileName: string;
+  size: number;
+}
+// ===================================
+// TIPE DATA - AUTH & USERS
+// ===================================
 export interface User {
   id_user: number;
   id_level: number;
@@ -12,12 +41,12 @@ export interface User {
   nohp: string | null;
   username: string;
   email: string | null;
-  level?: string;
   nama_usaha?: string;
   status_usaha?: 'BARU' | 'SUDAH_LAMA';
   verifiedAt?: string | null;
-  tbl_level?: { level: string };
-  tbl_kategori_usaha?: { nama_kategori: string };
+  tbl_level?: { id_level?: number; level: string; };
+  tbl_kategori_usaha?: KategoriUsaha | null;
+  level?: string;
 }
 
 export interface LoginResponse {
@@ -47,11 +76,11 @@ export interface ForgotPasswordResponse {
   message: string;
 }
 
-// ===================================
-// TIPE DATA - MASTER DATA
-// ===================================
 
-export interface BusinessCategory {
+// ===================================
+// TIPE DATA - MASTER DATA & KATEGORI
+// ===================================
+export interface KategoriUsaha {
   id_kategori_usaha: number;
   nama_kategori: string;
 }
@@ -66,60 +95,35 @@ export interface Subsektor {
     sub_sektor: string;
 }
 
-// ===================================
-// TIPE DATA - ARTICLES
-// ===================================
-
-export interface Article {
-  id_artikel: number;
-  judul: string;
-  deskripsi_singkat: string;
-  isi_lengkap: string;
-  gambar: string;
-  tbl_user: {
-    nama_user: string;
-    email: string;
-  };
-}
-
-export interface CreateArticleData {
-    judul: string;
-    isi_lengkap: string;
-    id_user: number;
-    deskripsi_singkat?: string;
-    gambar?: string;
-}
-
-export type UpdateArticleData = Partial<Omit<CreateArticleData, 'id_user'>>;
-
 
 // ===================================
 // TIPE DATA - PRODUCTS
 // ===================================
-
 export interface Product {
-    id_produk: number;
-    nama_produk: string;
-    deskripsi: string;
-    harga: number;
-    stok: number;
-    nohp: string;
-    gambar: string;
-    // Tambahkan properti lain sesuai kebutuhan
+  id_produk: number;
+  nama_produk: string;
+  nama_pelaku: string;
+  deskripsi: string;
+  harga: number;
+  stok: number;
+  nohp: string | null;
+  id_kategori_usaha: number;
+  gambar: string;
+  id_user: number;
+  tbl_kategori_usaha?: KategoriUsaha;
+  tbl_user?: { nama_user: string; };
+  tbl_olshop_link?: OlshopLink[];
 }
-
-export interface CreateProductData {
-    nama_produk: string;
-    harga: number;
-    stok: number;
-    id_sub: number;
-    deskripsi?: string;
-    nohp?: string;
-    gambar?: string;
+export interface ProductPayload {
+  nama_produk: string;
+  nama_pelaku: string;
+  deskripsi?: string;
+  harga: number; // tipe data number untuk JSON
+  stok: number;  // tipe data number untuk JSON
+  nohp?: string;
+  id_kategori_usaha: number;
+  gambar: string; // Tipe data string untuk URL gambar
 }
-
-export type UpdateProductData = Partial<CreateProductData>;
-
 export interface OlshopLink {
     id_link: number;
     nama_platform: string;
@@ -133,15 +137,29 @@ export interface CreateOlshopLinkData {
 }
 
 export type UpdateOlshopLinkData = Partial<CreateOlshopLinkData>;
-
+export type UpdateProductPayload = Partial<ProductPayload>;
 
 // ===================================
-// TIPE DATA - GENERIC RESPONSE WRAPPER
+// TIPE DATA - ARTICLES
 // ===================================
-
-export interface ApiResponse<T> {
-    message: string;
-    data: T;
-    success?: boolean;
-    error?: string;
+export interface Article {
+  id_artikel: number;
+  judul: string;
+  deskripsi_singkat: string;
+  isi_lengkap: string;
+  gambar: string;
+  tbl_user: {
+    nama_user: string;
+    email: string;
+  };
 }
+
+export interface CreateArticleData {
+  judul: string;
+  isi_lengkap: string;
+  id_user: number;
+  deskripsi_singkat?: string;
+  gambar?: string;
+}
+
+export type UpdateArticleData = Partial<Omit<CreateArticleData, 'id_user'>>;
