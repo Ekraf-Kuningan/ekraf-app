@@ -12,13 +12,12 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-// Impor fungsi login dari file api
-import { loginUser } from '../../lib/api'; // <-- PASTIKAN PATH INI BENAR
+// Impor objek authApi dari file api.ts
+import { authApi } from '../../lib/api'; // <-- PERUBAHAN 1: Impor objeknya
 
-// Impor komponen PopupTemplate
+// Impor komponen PopupTemplate dan custom hook
 import PopupTemplate from '../../components/PopUpTemplate'; // <-- PASTIKAN PATH INI BENAR
-import { useTheme } from '../Context/ThemeContext';
-
+import { useTheme } from '../Context/ThemeContext'; // <-- PASTIKAN PATH INI BENAR
 export default function Login({ navigation }: { navigation: any }) {
   const { isDark } = useTheme();
 
@@ -58,27 +57,28 @@ export default function Login({ navigation }: { navigation: any }) {
     });
   };
 
-  // Fungsi handleLogin yang sudah disederhanakan
+  // Fungsi handleLogin disesuaikan untuk memanggil authApi.login
   const handleLogin = async () => {
-    if (!email || !password) {
+    if (!email.trim() || !password) {
       showPopup('warning', 'Perhatian', 'Email dan Kata Sandi harus diisi.');
       return;
     }
 
     setLoading(true);
     try {
-      // Panggil fungsi login dari lib/api.ts
-      const { message } = await loginUser(email, password);
+      // Panggil fungsi login dari objek authApi
+      // Level 'umkm' sudah menjadi default di fungsi API, jadi tidak perlu disertakan
+      const { message } = await authApi.login(email, password);
 
       showPopup(
         'success',
         'Login Berhasil',
         message || 'Anda akan diarahkan ke halaman utama.',
         'Lanjutkan',
-        () => navigation.replace('NavigationBottom')
+        () => navigation.replace('MainApp') // Pastikan nama navigator sudah benar
       );
     } catch (error: any) {
-      // Tangkap error yang dilemparkan dari loginUser
+      // Tangkap error yang dilemparkan dari fungsi API
       console.error('Login error:', error.message);
       showPopup('error', 'Login Gagal', error.message);
     } finally {
@@ -86,7 +86,7 @@ export default function Login({ navigation }: { navigation: any }) {
     }
   };
 
-  // --- JSX (Tampilan Visual) - Tidak Ada Perubahan ---
+  // --- JSX (Tampilan Visual) ---
   return (
     <View className="flex-1 justify-center px-6 bg-white dark:bg-zinc-900">
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
@@ -150,7 +150,7 @@ export default function Login({ navigation }: { navigation: any }) {
         </View>
 
         {/* Lupa Kata Sandi */}
-        <TouchableOpacity onPress={() => navigation.navigate('ResetPassword')} className="self-end mt-2 mb-5">
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} className="self-end mt-2 mb-5">
           <Text className="font-p-medium text-xs text-[#FFAA01]">Lupa Kata Sandi?</Text>
         </TouchableOpacity>
       </View>
@@ -186,8 +186,6 @@ export default function Login({ navigation }: { navigation: any }) {
         title={popup.title}
         message={popup.message}
         buttonText={popup.buttonText}
-        customIcon={undefined}
-        customLogo={undefined}
       />
     </View>
   );
