@@ -114,7 +114,7 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
             const imageAsset = response.assets[0];
             setIsUploading(true);
             try {
-                const uploaderUrl = 'http://217.15.165.147:4090/api/uploader';
+                const uploaderUrl = 'https://apidl.asepharyana.cloud/api/uploader/ryzencdn';
                 const formData = new FormData();
                 formData.append('file', {
                     uri: imageAsset.uri,
