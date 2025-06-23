@@ -1,15 +1,25 @@
+// src/screens/Auth/Login.tsx
+
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, TouchableOpacity, StatusBar, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useColorScheme } from 'nativewind'; // NativeWind hook for color scheme
+import { useColorScheme } from 'nativewind';
+
+// Impor fungsi login dari file api
+import { loginUser } from '../../lib/api'; // <-- PASTIKAN PATH INI BENAR
 
 // Impor komponen PopupTemplate
 import PopupTemplate from '../../components/PopUpTemplate'; // <-- PASTIKAN PATH INI BENAR
 
 export default function Login({ navigation }: { navigation: any }) {
-  // Gunakan hook dari NativeWind untuk mengetahui mode saat ini jika diperlukan
   const { colorScheme } = useColorScheme();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -17,7 +27,7 @@ export default function Login({ navigation }: { navigation: any }) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // State untuk Popup
+  // State untuk Popup (tidak berubah)
   const [popup, setPopup] = useState({
     visible: false,
     theme: 'info' as 'success' | 'error' | 'warning' | 'info',
@@ -27,7 +37,7 @@ export default function Login({ navigation }: { navigation: any }) {
     buttonText: 'OK',
   });
 
-  // Fungsi untuk menampilkan popup
+  // Fungsi untuk menampilkan popup (tidak berubah)
   const showPopup = (
     theme: 'success' | 'error' | 'warning' | 'info',
     title: string,
@@ -48,6 +58,7 @@ export default function Login({ navigation }: { navigation: any }) {
     });
   };
 
+  // Fungsi handleLogin yang sudah disederhanakan
   const handleLogin = async () => {
     if (!email || !password) {
       showPopup('warning', 'Perhatian', 'Email dan Kata Sandi harus diisi.');
@@ -56,14 +67,8 @@ export default function Login({ navigation }: { navigation: any }) {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://ekraf.asepharyana.tech/api/auth/login/umkm', {
-        usernameOrEmail: email,
-        password: password,
-      });
-
-      const { message, token, user } = response.data;
-      await AsyncStorage.setItem('userToken', token);
-      await AsyncStorage.setItem('userData', JSON.stringify(user));
+      // Panggil fungsi login dari lib/api.ts
+      const { message } = await loginUser(email, password);
 
       showPopup(
         'success',
@@ -73,27 +78,24 @@ export default function Login({ navigation }: { navigation: any }) {
         () => navigation.replace('NavigationBottom')
       );
     } catch (error: any) {
-      console.error('Login error:', error.response?.data || error.message);
-      showPopup(
-        'error',
-        'Login Gagal',
-        error.response?.data?.message || 'Tidak dapat terhubung ke server. Mohon coba lagi.'
-      );
+      // Tangkap error yang dilemparkan dari loginUser
+      console.error('Login error:', error.message);
+      showPopup('error', 'Login Gagal', error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  // --- JSX (Tampilan Visual) - Tidak Ada Perubahan ---
   return (
-    // Container utama
     <View className="flex-1 justify-center px-6 bg-white dark:bg-zinc-900">
       <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
 
       {/* Header Logo */}
       <View className="items-center mb-8">
         <Image
-          source={require('../../assets/images/LogoText.png')}
-          className="w-64 h-20" // Ukuran disesuaikan agar lebih proporsional
+          source={require('../../assets/images/LogoText.png')} // <-- PASTIKAN PATH INI BENAR
+          className="w-64 h-20"
           resizeMode="contain"
         />
       </View>
@@ -113,7 +115,7 @@ export default function Login({ navigation }: { navigation: any }) {
         {/* Email Input */}
         <Text className="font-p-medium text-sm mb-2 text-zinc-900 dark:text-white">Email</Text>
         <View className="flex-row items-center border rounded-lg mb-4 h-12 bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-700">
-          <Icon name="mail-outline" size={22} className="text-gray-400 dark:text-gray-500 ml-3" />
+          <Icon name="mail-outline" size={22} color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'} className="ml-3" />
           <TextInput
             className="flex-1 px-3 text-sm font-p-regular text-zinc-900 dark:text-white"
             placeholder="Masukkan email disini"
@@ -128,7 +130,7 @@ export default function Login({ navigation }: { navigation: any }) {
         {/* Password Input */}
         <Text className="font-p-medium text-sm mb-2 text-zinc-900 dark:text-white">Kata Sandi</Text>
         <View className="flex-row items-center border rounded-lg h-12 bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-700">
-          <Icon name="lock-closed-outline" size={22} className="text-gray-400 dark:text-gray-500 ml-3" />
+          <Icon name="lock-closed-outline" size={22} color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'} className="ml-3" />
           <TextInput
             className="flex-1 px-3 text-sm font-p-regular text-zinc-900 dark:text-white"
             placeholder="Masukkan kata sandi disini"
@@ -142,7 +144,7 @@ export default function Login({ navigation }: { navigation: any }) {
             <Icon
               name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={22}
-              className="text-gray-400 dark:text-gray-500"
+              color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'}
             />
           </TouchableOpacity>
         </View>
@@ -176,14 +178,17 @@ export default function Login({ navigation }: { navigation: any }) {
         </TouchableOpacity>
       </View>
 
-      {/* Komponen Pop Up yang akan ditampilkan di atas segalanya */}
+      {/* Komponen Pop Up */}
       <PopupTemplate
         visible={popup.visible}
         onClose={popup.onClose}
         theme={popup.theme}
         title={popup.title}
         message={popup.message}
-        buttonText={popup.buttonText} customIcon={undefined} customLogo={undefined}      />
+        buttonText={popup.buttonText}
+        customIcon={undefined}
+        customLogo={undefined}
+      />
     </View>
   );
 }

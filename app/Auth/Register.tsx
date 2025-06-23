@@ -1,24 +1,18 @@
-import { Text, View, TextInput, TouchableOpacity, useColorScheme, SafeAreaView, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
+// src/screens/Auth/Register.tsx
+
+import { Text, View, TextInput, TouchableOpacity, SafeAreaView, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
+
+// Impor fungsi dan tipe dari file api.ts
+import { registerUser, fetchBusinessCategories, BusinessCategory, RegistrationData } from '../../lib/api'; // <-- PASTIKAN PATH INI BENAR
 import { CustomPicker } from '../../components/CustomPicker';
-
-// --- INTERFACE ---
-interface BusinessCategory {
-  id_kategori_usaha: number;
-  nama_kategori: string;
-}
-
-
-
+import { useTheme } from '../Context/ThemeContext';
 
 
 // --- KOMPONEN UTAMA REGISTER ---
 export default function Register({ navigation }: { navigation: any }) {
-  const colorScheme = useColorScheme();
-  const isDarkMode = colorScheme === 'dark';
-
+  const { isDark } = useTheme();
   // --- STATES ---
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -33,40 +27,30 @@ export default function Register({ navigation }: { navigation: any }) {
 
   const [businessCategories, setBusinessCategories] = useState<BusinessCategory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true); // State untuk loading kategori
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
   // --- EFFECTS ---
   useEffect(() => {
-    const fetchBusinessCategories = async () => {
+    // Fungsi async didefinisikan di dalam useEffect
+    const loadCategories = async () => {
       try {
-        const response = await axios.get('https://ekraf.asepharyana.tech/api/master-data/business-categories');
-        if (response.data && response.data.data) {
-          setBusinessCategories(response.data.data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch business categories:', error);
-        Alert.alert('Error', 'Gagal memuat kategori usaha. Silakan coba lagi nanti.');
+        const categories = await fetchBusinessCategories();
+        setBusinessCategories(categories);
+      } catch (error: any) {
+        Alert.alert('Error', error.message);
+      } finally {
+        setIsLoadingCategories(false);
       }
     };
 
-    fetchBusinessCategories();
-  }, []);
-
-  // --- STYLING CONSTANTS ---
-  const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
-  const buttonBackgroundColor = 'bg-[#FFAA01]';
-  const linkTextColor = 'text-[#FFAA01]';
-  const placeholderTextColorValue = isDarkMode ? '#A9A9A9' : '#A0A0A0';
-  const inputBorderColor = isDarkMode ? 'border-neutral-600' : 'border-gray-400';
-  const inputBackgroundColor = isDarkMode ? 'bg-neutral-800' : 'bg-white';
-  const textColor = isDarkMode ? 'text-white' : 'text-black';
-  const labelColor = isDarkMode ? 'text-gray-200' : 'text-gray-700';
-  const subtitleColor = isDarkMode ? 'text-gray-300' : 'text-gray-600';
-  const subtleBackgroundColor = isDarkMode ? 'bg-neutral-900' : 'bg-white';
+    loadCategories();
+  }, []); // Dependensi kosong agar hanya berjalan sekali
 
   // --- HANDLERS ---
   const handleRegister = async () => {
+    // Validasi input tetap di komponen karena ini adalah bagian dari logika UI
     if (!username.trim() || !email.trim() || !password || !confirmPassword || !nama_user.trim() || !nohp.trim() || !nama_usaha.trim() || id_kategori_usaha === null || !jk || !status_usaha) {
       Alert.alert('Data Tidak Lengkap', 'Harap isi semua kolom yang wajib diisi.');
       return;
@@ -77,13 +61,14 @@ export default function Register({ navigation }: { navigation: any }) {
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        Alert.alert('Format Email Salah', 'Harap masukkan alamat email yang valid.');
-        return;
+      Alert.alert('Format Email Salah', 'Harap masukkan alamat email yang valid.');
+      return;
     }
 
     setIsLoading(true);
 
-    const registrationData = {
+    // Siapkan data sesuai interface RegistrationData
+    const registrationData: RegistrationData = {
       nama_user,
       username,
       email,
@@ -92,29 +77,37 @@ export default function Register({ navigation }: { navigation: any }) {
       nohp,
       nama_usaha,
       status_usaha,
-      id_kategori_usaha: String(id_kategori_usaha),
+      id_kategori_usaha: String(id_kategori_usaha), // Konversi ke string sesuai kebutuhan API
     };
 
     try {
-      const response = await axios.post('https://ekraf.asepharyana.tech/api/auth/register/umkm', registrationData, {
-        headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
-      });
-      if (response.data.success) {
-        Alert.alert('Pendaftaran Berhasil', response.data.message);
-        navigation.navigate('Login');
-      } else {
-        Alert.alert('Pendaftaran Gagal', response.data.message || 'Terjadi kesalahan yang tidak diketahui.');
-      }
+      // Panggil fungsi registerUser dari api.ts
+      const response = await registerUser(registrationData);
+      Alert.alert('Pendaftaran Berhasil', response.message);
+      navigation.navigate('Login');
     } catch (error: any) {
-        const errorMessage = error.response?.data?.message || 'Terjadi kesalahan pada server. Silakan coba lagi.';
-        Alert.alert('Pendaftaran Gagal', errorMessage);
-        console.error('Registration error:', error.response?.data || error.message);
+      // Tangkap error yang sudah bersih dari api.ts
+      Alert.alert('Pendaftaran Gagal', error.message);
+      console.error('Registration error:', error.message);
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
-  // --- RENDER ---
+  // --- STYLING CONSTANTS (Tidak Berubah) ---
+  const iconColor = isDark ? '#FFFFFF' : '#757575';
+  const buttonBackgroundColor = 'bg-[#FFAA01]';
+  const linkTextColor = 'text-[#FFAA01]';
+  const placeholderTextColorValue = isDark ? '#A9A9A9' : '#A0A0A0';
+  const inputBorderColor = isDark ? 'border-neutral-600' : 'border-gray-400';
+  const inputBackgroundColor = isDark ? 'bg-neutral-800' : 'bg-white';
+  const textColor = isDark ? 'text-white' : 'text-black';
+  const labelColor = isDark ? 'text-gray-200' : 'text-gray-700';
+  const subtitleColor = isDark ? 'text-gray-300' : 'text-gray-600';
+  const subtleBackgroundColor = isDark ? 'bg-neutral-900' : 'bg-white';
+
+
+  // --- RENDER (JSX tidak berubah, hanya picker kategori yang disesuaikan untuk loading) ---
   return (
     <SafeAreaView className={`flex-1 ${subtleBackgroundColor}`}>
       <ScrollView
@@ -125,7 +118,7 @@ export default function Register({ navigation }: { navigation: any }) {
         <View className="pt-12">
           <View className="items-center mt-6 mb-2">
             <Image
-              source={require('../../assets/images/LogoText.png')}
+              source={require('../../assets/images/LogoText.png')} // <-- PASTIKAN PATH INI BENAR
               className="w-64 h-20 mb-3"
               resizeMode="contain"
             />
@@ -137,13 +130,14 @@ export default function Register({ navigation }: { navigation: any }) {
             Isi data di bawah ini untuk melanjutkan.
           </Text>
 
-          {/* === FORM INPUTS === */}
+          {/* === FORM INPUTS (TIDAK BERUBAH) === */}
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Username</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <Icon name="person-outline" color={iconColor} size={24} />
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Masukkan username" placeholderTextColor={placeholderTextColorValue} value={username} onChangeText={setUsername} autoCapitalize="none" />
           </View>
 
+          {/* ... semua TextInput lainnya tidak berubah ... */}
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Email</Text>
           <View className={`flex-row items-center border rounded-lg px-3 h-14 mb-4 ${inputBorderColor} ${inputBackgroundColor}`}>
             <Icon name="mail-outline" color={iconColor} size={24} />
@@ -186,59 +180,60 @@ export default function Register({ navigation }: { navigation: any }) {
             <TextInput className={`flex-1 ml-2 text-base ${textColor}`} placeholder="Masukkan nama usaha Anda" placeholderTextColor={placeholderTextColorValue} value={nama_usaha} onChangeText={setNamaUsaha} autoCapitalize="words" />
           </View>
 
-          {/* === CUSTOM PICKERS === */}
+          {/* === CUSTOM PICKERS (TIDAK BERUBAH) === */}
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Jenis Kelamin</Text>
           <CustomPicker
-              items={[
-                  { label: 'Laki-laki', value: 'Laki-laki' },
-                  { label: 'Perempuan', value: 'Perempuan' },
-              ]}
-              selectedValue={jk}
-              onValueChange={setJk}
-              placeholder="Pilih Jenis Kelamin"
-              isDarkMode={isDarkMode}
-              iconColor={iconColor}
-              inputBorderColor={inputBorderColor}
-              inputBackgroundColor={inputBackgroundColor}
-              textColor={textColor}
-              placeholderTextColorValue={placeholderTextColorValue}
+            items={[
+              { label: 'Laki-laki', value: 'Laki-laki' },
+              { label: 'Perempuan', value: 'Perempuan' },
+            ]}
+            selectedValue={jk}
+            onValueChange={setJk}
+            placeholder="Pilih Jenis Kelamin"
+            isDarkMode={isDark}
+            iconColor={iconColor}
+            inputBorderColor={inputBorderColor}
+            inputBackgroundColor={inputBackgroundColor}
+            textColor={textColor}
+            placeholderTextColorValue={placeholderTextColorValue}
           />
 
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Status Usaha</Text>
           <CustomPicker
-              items={[
-                  { label: 'Usaha Baru', value: 'BARU' },
-                  { label: 'Sudah Berjalan Lama', value: 'SUDAH_LAMA' },
-              ]}
-              selectedValue={status_usaha}
-              onValueChange={setStatusUsaha}
-              placeholder="Pilih Status Usaha"
-              isDarkMode={isDarkMode}
-              iconColor={iconColor}
-              inputBorderColor={inputBorderColor}
-              inputBackgroundColor={inputBackgroundColor}
-              textColor={textColor}
-              placeholderTextColorValue={placeholderTextColorValue}
+            items={[
+              { label: 'Usaha Baru', value: 'BARU' },
+              { label: 'Sudah Berjalan Lama', value: 'SUDAH_LAMA' },
+            ]}
+            selectedValue={status_usaha}
+            onValueChange={setStatusUsaha}
+            placeholder="Pilih Status Usaha"
+            isDarkMode={isDark}
+            iconColor={iconColor}
+            inputBorderColor={inputBorderColor}
+            inputBackgroundColor={inputBackgroundColor}
+            textColor={textColor}
+            placeholderTextColorValue={placeholderTextColorValue}
           />
 
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Kategori Usaha</Text>
           <CustomPicker
-              items={businessCategories.map(category => ({
-                  label: category.nama_kategori,
-                  value: category.id_kategori_usaha,
-              }))}
-              selectedValue={id_kategori_usaha}
-              onValueChange={setIdKategoriUsaha}
-              placeholder="Pilih Kategori Usaha"
-              isDarkMode={isDarkMode}
-              iconColor={iconColor}
-              inputBorderColor={inputBorderColor}
-              inputBackgroundColor={inputBackgroundColor}
-              textColor={textColor}
-              placeholderTextColorValue={placeholderTextColorValue}
+            items={businessCategories.map(category => ({
+              label: category.nama_kategori,
+              value: category.id_kategori_usaha,
+            }))}
+            selectedValue={id_kategori_usaha}
+            onValueChange={setIdKategoriUsaha}
+            placeholder={isLoadingCategories ? 'Memuat kategori...' : 'Pilih Kategori Usaha'}
+            isDarkMode={isDark}
+            iconColor={iconColor}
+            inputBorderColor={inputBorderColor}
+            inputBackgroundColor={inputBackgroundColor}
+            textColor={textColor}
+            placeholderTextColorValue={placeholderTextColorValue}
           />
 
-          <TouchableOpacity onPress={handleRegister} disabled={isLoading} className={`${buttonBackgroundColor} py-4 rounded-lg items-center mt-5 mb-4`}>
+          {/* === TOMBOL DAFTAR (TIDAK BERUBAH) === */}
+          <TouchableOpacity onPress={handleRegister} disabled={isLoading || isLoadingCategories} className={`${buttonBackgroundColor} py-4 rounded-lg items-center mt-5 mb-4`}>
             {isLoading ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
@@ -247,14 +242,13 @@ export default function Register({ navigation }: { navigation: any }) {
           </TouchableOpacity>
 
           <View className="flex-row justify-center items-center mt-4 mb-8">
-              <Text className={`text-base font-poppins-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>Sudah punya akun? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                  <Text className={`text-base font-poppins-bold ${linkTextColor}`}>Masuk</Text>
-              </TouchableOpacity>
+            <Text className={`text-base font-poppins-medium ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>Sudah punya akun? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text className={`text-base font-poppins-bold ${linkTextColor}`}>Masuk</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
