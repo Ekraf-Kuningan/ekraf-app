@@ -13,8 +13,8 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 
 // Impor yang sudah disesuaikan
-import { authApi } from '../../lib/api'; // <-- Disesuaikan
-import PopupTemplate from '../../components/PopUpTemplate'; // <-- Ditambahkan
+import { authApi } from '../../lib/api';
+import PopupTemplate from '../../components/PopUpTemplate';
 import { useTheme } from '../Context/ThemeContext';
 
 const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => { // Nama komponen diubah agar lebih jelas
