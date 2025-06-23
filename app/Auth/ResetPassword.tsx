@@ -1,3 +1,5 @@
+// src/screens/Auth/ResetPasswordScreen.tsx
+
 import React, { useState } from 'react';
 import {
   View,
@@ -12,12 +14,16 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
+// Impor fungsi API yang baru dibuat
+import { requestPasswordReset } from '../../lib/api'; // <-- PASTIKAN PATH INI BENAR
+
 const ResetPasswordScreen = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  // Handler yang sudah di-refactor
   const handleResetPassword = async () => {
     if (!email) {
       Alert.alert('Error', 'Email tidak boleh kosong.');
@@ -27,34 +33,26 @@ const ResetPasswordScreen = ({ navigation }: { navigation: any }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://ekraf.asepharyana.tech/api/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': 'application/json',
-        },
-        body: JSON.stringify({ email: email }),
-      });
+      // Panggil fungsi dari lib/api.ts
+      const response = await requestPasswordReset(email);
 
-      const data = await response.json();
+      Alert.alert(
+        'Sukses',
+        response.message,
+        [{ text: 'OK', onPress: () => navigation.goBack() }]
+      );
 
-      if (response.ok && data.success) {
-        Alert.alert(
-          'Sukses',
-          data.message,
-          [{ text: 'OK', onPress: () => navigation.goBack() }]
-        );
-      } else {
-        Alert.alert('Error', data.message || 'Terjadi kesalahan. Silakan coba lagi.');
-      }
-    } catch (error) {
+    } catch (error: any) {
+      // Tangkap error yang sudah bersih dari fungsi API
       console.error(error);
-      Alert.alert('Error', 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
+      Alert.alert('Error', error.message);
     } finally {
       setLoading(false);
     }
   };
 
+
+  // --- JSX (Tampilan Visual) - Tidak Ada Perubahan ---
   return (
     <SafeAreaView className={`flex-1 pt-2 ${isDark ? 'bg-black' : 'bg-white'}`}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />

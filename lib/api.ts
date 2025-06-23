@@ -43,9 +43,41 @@ interface RegisterResponse {
     message: string;
     // tambahkan properti lain jika ada
 }
-
+interface PasswordResetResponse {
+    success: boolean;
+    message: string;
+}
 
 // --- FUNGSI API (AUTH) ---
+
+export const requestPasswordReset = async (email: string) => {
+    try {
+        const response = await axios.post<PasswordResetResponse>(`${API_BASE_URL}/auth/forgot-password`, {
+            email: email,
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'accept': 'application/json',
+            },
+        });
+
+        if (response.data && response.data.success) {
+            return response.data; // Mengembalikan { success: true, message: '...' }
+        } else {
+            // Menangani kasus di mana server merespons 200 OK tapi dengan success: false
+            throw new Error(response.data.message || 'Gagal mengirim email reset password.');
+        }
+    } catch (error: any) {
+        if (axios.isAxiosError(error) && error.response) {
+            // Error dari server (misal: email tidak ditemukan)
+            throw new Error(error.response.data.message || 'Terjadi kesalahan saat memproses permintaan.');
+        } else {
+            // Error jaringan atau lainnya
+            throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet Anda.');
+        }
+    }
+};
+
 
 // Fungsi Login (sebelumnya)
 export const loginUser = async (usernameOrEmail: string, password: string) => {

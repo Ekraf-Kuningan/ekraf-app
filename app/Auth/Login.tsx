@@ -11,16 +11,16 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useColorScheme } from 'nativewind';
 
 // Impor fungsi login dari file api
 import { loginUser } from '../../lib/api'; // <-- PASTIKAN PATH INI BENAR
 
 // Impor komponen PopupTemplate
 import PopupTemplate from '../../components/PopUpTemplate'; // <-- PASTIKAN PATH INI BENAR
+import { useTheme } from '../Context/ThemeContext';
 
 export default function Login({ navigation }: { navigation: any }) {
-  const { colorScheme } = useColorScheme();
+  const { isDark } = useTheme();
 
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [email, setEmail] = useState('');
@@ -89,7 +89,7 @@ export default function Login({ navigation }: { navigation: any }) {
   // --- JSX (Tampilan Visual) - Tidak Ada Perubahan ---
   return (
     <View className="flex-1 justify-center px-6 bg-white dark:bg-zinc-900">
-      <StatusBar barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       {/* Header Logo */}
       <View className="items-center mb-8">
@@ -115,11 +115,11 @@ export default function Login({ navigation }: { navigation: any }) {
         {/* Email Input */}
         <Text className="font-p-medium text-sm mb-2 text-zinc-900 dark:text-white">Email</Text>
         <View className="flex-row items-center border rounded-lg mb-4 h-12 bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-700">
-          <Icon name="mail-outline" size={22} color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'} className="ml-3" />
+          <Icon name="mail-outline" size={22} color={isDark ? '#9CA3AF' : '#6B7280'} className="ml-3" />
           <TextInput
             className="flex-1 px-3 text-sm font-p-regular text-zinc-900 dark:text-white"
             placeholder="Masukkan email disini"
-            placeholderTextColor={colorScheme === 'dark' ? '#777777' : '#9CA3AF'}
+            placeholderTextColor={isDark ? '#777777' : '#9CA3AF'}
             keyboardType="email-address"
             value={email}
             onChangeText={setEmail}
@@ -130,11 +130,11 @@ export default function Login({ navigation }: { navigation: any }) {
         {/* Password Input */}
         <Text className="font-p-medium text-sm mb-2 text-zinc-900 dark:text-white">Kata Sandi</Text>
         <View className="flex-row items-center border rounded-lg h-12 bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-700">
-          <Icon name="lock-closed-outline" size={22} color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'} className="ml-3" />
+          <Icon name="lock-closed-outline" size={22} color={isDark ? '#9CA3AF' : '#6B7280'} className="ml-3" />
           <TextInput
             className="flex-1 px-3 text-sm font-p-regular text-zinc-900 dark:text-white"
             placeholder="Masukkan kata sandi disini"
-            placeholderTextColor={colorScheme === 'dark' ? '#777777' : '#9CA3AF'}
+            placeholderTextColor={isDark ? '#777777' : '#9CA3AF'}
             secureTextEntry={!passwordVisible}
             value={password}
             onChangeText={setPassword}
@@ -144,7 +144,7 @@ export default function Login({ navigation }: { navigation: any }) {
             <Icon
               name={passwordVisible ? 'eye-off-outline' : 'eye-outline'}
               size={22}
-              color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'}
+              color={isDark ? '#9CA3AF' : '#6B7280'}
             />
           </TouchableOpacity>
         </View>
