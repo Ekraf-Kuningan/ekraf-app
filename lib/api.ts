@@ -2,7 +2,7 @@
 
 import axios, { AxiosInstance } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as T from './types'; // Impor semua tipe dari file types.ts dengan alias T
+import * as T from './types';
 
 const API_BASE_URL = 'https://ekraf.asepharyana.tech/api';
 

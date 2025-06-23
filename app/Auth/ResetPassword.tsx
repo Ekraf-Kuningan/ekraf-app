@@ -14,8 +14,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 // Impor yang sudah disesuaikan
 import { authApi } from '../../lib/api'; // <-- Disesuaikan
-import { useTheme } from '../context/ThemeContext'; // <-- Disesuaikan
 import PopupTemplate from '../../components/PopUpTemplate'; // <-- Ditambahkan
+import { useTheme } from '../Context/ThemeContext';
 
 const ForgotPasswordScreen = ({ navigation }: { navigation: any }) => { // Nama komponen diubah agar lebih jelas
   const { isDark } = useTheme(); // Menggunakan hook tema kustom

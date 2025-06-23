@@ -7,9 +7,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 
 import { authApi, masterDataApi } from '../../lib/api';
 import { BusinessCategory, RegistrationData } from '../../lib/types';
-import { useTheme } from '../context/ThemeContext'; // Pastikan path benar
 import { CustomPicker } from '../../components/CustomPicker'; // Pastikan path benar
 import PopupTemplate from '../../components/PopUpTemplate'; // <-- Impor PopupTemplate
+import { useTheme } from '../Context/ThemeContext';
 
 // --- KOMPONEN UTAMA REGISTER ---
 export default function Register({ navigation }: { navigation: any }) {
