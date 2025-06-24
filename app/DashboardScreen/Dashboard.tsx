@@ -165,9 +165,12 @@ export default function Dashboard() {
                     className={`w-24 h-24 rounded-xl items-center justify-center mb-1 
                       ${isDark ? 'bg-[#232323]' : 'bg-[#fff2d6]'}`
                     }>
-                    { }
                     <Image
-                      source={require('../../assets/images/ekraf.png')}
+                      source={
+                        item.image
+                          ? { uri: item.image }
+                          : require('../../assets/images/ekraf.png')
+                      }
                       className="w-12 h-12"
                       resizeMode="contain"
                     />

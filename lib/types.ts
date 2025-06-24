@@ -80,6 +80,7 @@ export interface ForgotPasswordResponse {
 export interface KategoriUsaha {
   id_kategori_usaha: number;
   nama_kategori: string;
+  image: string;
 }
 
 export interface TblLevel {
