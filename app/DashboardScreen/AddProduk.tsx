@@ -23,8 +23,8 @@ import { masterDataApi, productsApi, uploaderApi, usersApi } from '../../lib/api
 import { KategoriUsaha, ProductPayload } from '../../lib/types';
 import { CustomPicker } from '../../components/CustomPicker';
 import PopupTemplate from '../../components/PopUpTemplate';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Context/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
 
 // --- HELPER FUNCTIONS ---
 const requestPermission = async (permission: any): Promise<boolean> => {
@@ -35,9 +35,9 @@ const requestPermission = async (permission: any): Promise<boolean> => {
     return true; // di iOS, izin ditangani via Info.plist
 };
 
-// --- MAIN COMPONENT ---
-export default function PendaftaranProdukScreen({ navigation }: { navigation: any }) {
+export default function PendaftaranProdukScreen() {
     const { isDark } = useTheme();
+    const navigation = useNavigation();
 
     // --- STATES ---
     const [namaPelaku, setNamaPelaku] = useState('');
@@ -158,7 +158,7 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
 
         try {
             await productsApi.create(productPayload);
-            showPopup('success', 'Berhasil!', 'Produk Anda telah berhasil didaftarkan.', 'Selesai', () => navigation.goBack());
+            showPopup('success', 'Berhasil!', 'Produk Anda telah berhasil didaftarkan.', 'Selesai', () => navigation.navigate('Dashboard'));
         } catch (error: any) {
             showPopup('error', 'Gagal Menyimpan', error.message);
         } finally {
@@ -175,12 +175,6 @@ export default function PendaftaranProdukScreen({ navigation }: { navigation: an
         <View className="flex-1 bg-white dark:bg-zinc-900">
             <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} backgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'} />
             <ScrollView className="flex-grow" keyboardShouldPersistTaps="handled">
-                <View className="flex-row items-center p-4 border-b border-gray-200 dark:border-zinc-800">
-                    <TouchableOpacity onPress={() => navigation.goBack()}>
-                        <Icon name="arrow-back-outline" size={28} color={isDark ? '#fff' : '#222'} />
-                    </TouchableOpacity>
-                    <Text className="text-xl font-semibold ml-4 text-black dark:text-white">Tambah Produk Baru</Text>
-                </View>
 
                 <View className="p-5">
                     <Text className={labelStyle}>Nama Produk</Text>

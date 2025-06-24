@@ -96,6 +96,7 @@ export interface Subsektor {
 // ===================================
 // TIPE DATA - PRODUCTS
 // ===================================
+
 export interface Product {
   id_produk: number;
   nama_produk: string;
@@ -107,6 +108,8 @@ export interface Product {
   id_kategori_usaha: number;
   gambar: string;
   id_user: number;
+  // TAMBAHKAN BARIS DI BAWAH INI
+  status_produk: 'disetujui' | 'pending' | 'ditolak' | 'tidak aktif';
   tbl_kategori_usaha?: KategoriUsaha;
   tbl_user?: { nama_user: string; };
   tbl_olshop_link?: OlshopLink[];
