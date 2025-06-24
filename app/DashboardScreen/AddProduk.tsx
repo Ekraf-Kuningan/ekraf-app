@@ -24,7 +24,9 @@ import { KategoriUsaha, ProductPayload } from '../../lib/types';
 import { CustomPicker } from '../../components/CustomPicker';
 import PopupTemplate from '../../components/PopUpTemplate';
 import { useTheme } from '../Context/ThemeContext';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+
+// Ganti dengan tipe param list yang sesuai dengan navigator Anda
 
 // --- HELPER FUNCTIONS ---
 const requestPermission = async (permission: any): Promise<boolean> => {
@@ -32,12 +34,17 @@ const requestPermission = async (permission: any): Promise<boolean> => {
         const granted = await PermissionsAndroid.request(permission);
         return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
-    return true; // di iOS, izin ditangani via Info.plist
+    // di iOS, izin ditangani via Info.plist
+    return true;
+};
+
+type RootStackParamList = {
+    Dashboard: undefined;
 };
 
 export default function PendaftaranProdukScreen() {
     const { isDark } = useTheme();
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
     // --- STATES ---
     const [namaPelaku, setNamaPelaku] = useState('');
