@@ -30,6 +30,8 @@ import ProfileScreen from './app/DashboardScreen/ProfilScreen';
 import AddProdukScreen from './app/DashboardScreen/AddProduk';
 import SplashScreen from './app/layout/SplashScreen';
 
+import ProductEditScreen from './app/DashboardScreen/ProductEditScreen';
+
 import './global.css';
 
 const Stack = createNativeStackNavigator();
@@ -179,6 +181,16 @@ function AppContent() {
             headerRight: renderHeaderRight,
             headerShadowVisible: false,
           })}
+        />
+        <Stack.Screen
+          name="ProductEdit"
+          component={ProductEditScreen}
+          options={{
+            title: 'Edit Produk', // Judul header untuk layar ini
+            headerStyle: { backgroundColor: isDark ? '#18181b' : '#fff' },
+            headerTitleStyle: { color: isDark ? '#fff' : '#18181b' },
+            headerTintColor: isDark ? '#fff' : '#18181b', // Warna tombol kembali
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
