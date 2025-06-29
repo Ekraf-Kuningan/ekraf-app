@@ -29,6 +29,7 @@ import DashboardScreen from './app/DashboardScreen/Dashboard';
 import ProfileScreen from './app/DashboardScreen/ProfilScreen';
 import AddProdukScreen from './app/DashboardScreen/AddProduk';
 import SplashScreen from './app/layout/SplashScreen';
+import ListProdukScreen from './app/DashboardScreen/ProdukData';
 
 import ProductEditScreen from './app/DashboardScreen/ProductEditScreen';
 
@@ -91,6 +92,9 @@ const ProfileTabBarIcon = ({ focused, color }: TabBarIconProps) => (
 const AddProdukTabBarIcon = ({ focused, color }: TabBarIconProps) => (
   <Ionicons name={focused ? 'add-circle' : 'add-circle-outline'} size={24} color={color} />
 );
+const ListProdukTabBarIcon = ({ focused, color }: TabBarIconProps) => (
+  <Ionicons name={focused ? 'list' : 'list-outline'} size={24} color={color} />
+);
 
 // Tombol toggle tema (tetap sama)
 const HeaderThemeToggleButton = () => {
@@ -133,6 +137,16 @@ function MainTabNavigator() {
       <Tab.Screen name="Dashboard" options={{ tabBarIcon: DashboardTabBarIcon }}>
         {() => <FadeScreen><DashboardScreen /></FadeScreen>}
       </Tab.Screen>
+      <Tab.Screen name="List Produk" options={{ tabBarIcon: ListProdukTabBarIcon }}>
+      {() => {
+        const { isDark } = useTheme();
+        return (
+          <FadeScreen>
+            <ListProdukScreen isDark={isDark} />
+          </FadeScreen>
+        );
+      }}
+      </Tab.Screen>
       <Tab.Screen name="Add Produk" options={{ tabBarIcon: AddProdukTabBarIcon }}>
         {() => <FadeScreen><AddProdukScreen /></FadeScreen>}
       </Tab.Screen>
@@ -147,6 +161,7 @@ function MainTabNavigator() {
 function getHeaderTitle(route: RouteProp<ParamListBase, 'MainApp'>) {
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Dashboard';
   switch (routeName) {
+    case 'List Produk': return 'Produk Saya';
     case 'Add Produk': return 'Tambah Produk';
     case 'Profil': return 'Profil';
     case 'Dashboard':

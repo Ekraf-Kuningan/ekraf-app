@@ -45,7 +45,6 @@ type RootStackParamList = {
 export default function PendaftaranProdukScreen() {
     const { isDark } = useTheme();
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
     // --- STATES ---
     const [namaPelaku, setNamaPelaku] = useState('');
     const [namaProduk, setNamaProduk] = useState('');

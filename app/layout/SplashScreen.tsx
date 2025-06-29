@@ -78,8 +78,7 @@ export default function SplashScreen() { // navigation prop tidak perlu di-destr
       checkAuthStatus();
     });
 
-    // Tidak perlu setTimeout terpisah karena logika navigasi ada di callback .start() animasi
-    // dan useNavigation() sudah menangani dependensi navigasi
+    
 
   }, [iconFadeAnim, iconScaleAnim, textFadeAnim, textTranslateYAnim, navigation]); // Tambahkan navigation sebagai dependensi
 

@@ -154,7 +154,7 @@ export default function Register({ navigation }: { navigation: any }) {
       <ScrollView
         contentContainerClassName="flex-grow"
         keyboardShouldPersistTaps="handled"
-        className="px-6 pt-5 pb-8"
+        className="px-6"
       >
         <View className="pt-12">
           {/* ... (Konten Form dan Teks tidak berubah) ... */}
