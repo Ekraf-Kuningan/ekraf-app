@@ -48,6 +48,24 @@ const dummyProduk = [
     foto: 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=400&q=80',
     status: 'Tidak Aktif',
   },
+  {
+    id: 6,
+    nama: 'Topi Anyam',
+    kategori: 'Aksesoris',
+    harga: 35000,
+    stok: 0,
+    foto: 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=400&q=80',
+    status: 'Tidak Aktif',
+  },
+  {
+    id: 7,
+    nama: 'Topi Anyam',
+    kategori: 'Aksesoris',
+    harga: 35000,
+    stok: 0,
+    foto: 'https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=400&q=80',
+    status: 'Tidak Aktif',
+  },
 
 ];
 
