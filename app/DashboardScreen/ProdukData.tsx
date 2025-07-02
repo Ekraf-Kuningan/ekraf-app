@@ -1,16 +1,47 @@
 import { Text, StatusBar, SafeAreaView, View, Image, ScrollView, TouchableOpacity,Alert } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { productsApi } from '../../lib/api';
 import { Product } from '../../lib/types';
 import { usersApi } from '../../lib/api';
+import PopUpConfirm from '../../components/PopUpConfirm';
+import DetailProdukModal from '../../components/DetailProdukModal';
 
 const statusList = ['Semua', 'pending', 'disetujui', 'ditolak', 'tidak aktif'];
 
 export default function ProdukData({ isDark }: { isDark: boolean }) {
+  const navigation = useNavigation();
   const [filterStatus, setFilterStatus] = useState('Semua');
   const [produk, setProduk] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  const handleDeletePress = (productId: number) => {
+    setSelectedProductId(productId);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedProductId) {
+      try {
+        await productsApi.delete(selectedProductId);
+        Alert.alert('Sukses', 'Produk berhasil dihapus.');
+        fetchProduk();
+      } catch (err: any) {
+        Alert.alert('Error', err.message);
+      }
+    }
+    setShowDeleteConfirm(false);
+    setSelectedProductId(null);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
+    setSelectedProductId(null);
+  };
 
   // Fungsi fetchProduk dipisah agar bisa dipanggil ulang
   const fetchProduk = useCallback(async () => {
@@ -37,25 +68,24 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
       fetchProduk();
     }, [fetchProduk])
   );
-  const handleDelete = (productId: number) => {
-      Alert.alert('Hapus Produk', 'Yakin ingin menghapus produk ini?', [
-          {text: 'Batal', style: 'cancel'},
-          {
-            text: 'Hapus',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                await productsApi.delete(productId);
-                Alert.alert('Sukses', 'Produk berhasil dihapus.');
-                fetchProduk();
-              } catch (err: any) {
-                Alert.alert('Error', err.message);
-              }
-            },
-          },
-        ],
-      );
-    };
+
+  const handleEdit = (productId: number) => {
+    // Navigasi ke halaman edit produk
+    (navigation as any).navigate('ProductEdit', { id: productId });
+  };
+
+  const handleDetail = (productId: number) => {
+    const product = produk.find(p => p.id_produk === productId);
+    if (product) {
+      setSelectedProduct(product);
+      setShowDetailModal(true);
+    }
+  };
+
+  const handleCloseDetail = () => {
+    setShowDetailModal(false);
+    setSelectedProduct(null);
+  };
 
   const filteredProduk = filterStatus === 'Semua'
     ? produk
@@ -128,13 +158,13 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
                   {item.status_produk.charAt(0).toUpperCase() + item.status_produk.slice(1)}
                 </Text>
                 <View className='flex-row mt-2 mx-2 space-x-2'>
-                  <TouchableOpacity onPress={() => navigation.navigate('ProductEdit', { id: item.id_produk })}>
+                  <TouchableOpacity onPress={() => handleEdit(item.id_produk)}>
                     <Text className="text-xs text-[#FFAA01] mr-2">Edit</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDelete(item.id_produk)}>
+                  <TouchableOpacity onPress={() => handleDeletePress(item.id_produk)}>
                     <Text className="text-xs text-red-500">Hapus</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDelete(item.id_produk)}>
+                  <TouchableOpacity onPress={() => handleDetail(item.id_produk)}>
                     <Text className="text-xs text-blue-500 mx-2">Detail</Text>
                   </TouchableOpacity>
                 </View>
@@ -145,6 +175,26 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
           ))
         )}
       </ScrollView>
+
+      {/* PopUp Konfirmasi Hapus */}
+      <PopUpConfirm
+        visible={showDeleteConfirm}
+        theme="error"
+        title="Hapus Produk"
+        message="Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan."
+        yesText="Hapus"
+        noText="Batal"
+        onYes={handleConfirmDelete}
+        onNo={handleCancelDelete}
+      />
+
+      {/* Modal Detail Produk */}
+      <DetailProdukModal
+        visible={showDetailModal}
+        onClose={handleCloseDetail}
+        produk={selectedProduct}
+        isDark={isDark}
+      />
     </SafeAreaView>
   );
 }
