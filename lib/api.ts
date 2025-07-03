@@ -81,7 +81,7 @@ export const productsApi = {
 
   createLink: (productId: number, data: T.CreateOlshopLinkData) =>
     privateClient
-      .post<T.ApiResponse<T.OlshopLink>>(`/products/${productId}/links`, data)
+      .post<T.ApiResponse<T.TblOlshopLink>>(`/products/${productId}/links`, data)
       .then(res => res.data)
       .catch(e => handleError(e, `menambah link ke produk #${productId}`)),
 
@@ -91,7 +91,7 @@ export const productsApi = {
     data: T.UpdateOlshopLinkData,
   ) =>
     privateClient
-      .put<T.ApiResponse<T.OlshopLink>>(
+      .put<T.ApiResponse<T.TblOlshopLink>>(
         `/products/${productId}/links/${linkId}`,
         data,
       )
@@ -187,19 +187,19 @@ export const uploaderApi = {
 export const masterDataApi = {
   getBusinessCategories: () =>
     publicClient
-      .get<T.ApiResponse<T.KategoriUsaha[]>>('/master-data/business-categories')
+      .get<T.ApiResponse<T.BusinessCategory[]>>('/master-data/business-categories')
       .then(res => res.data.data)
       .catch(e => handleError(e, 'mengambil kategori usaha')),
 
   getUserLevels: () =>
     publicClient
-      .get<T.ApiResponse<T.TblLevel[]>>('/master-data/levels')
+      .get<T.ApiResponse<T.Level[]>>('/master-data/levels')
       .then(res => res.data.data)
       .catch(e => handleError(e, 'mengambil level pengguna')),
 
   getSubsectors: () =>
     publicClient
-      .get<T.ApiResponse<T.Subsektor[]>>('/master-data/subsectors')
+      .get<T.ApiResponse<T.Subsector[]>>('/master-data/subsectors')
       .then(res => res.data.data)
       .catch(e => handleError(e, 'mengambil subsektor')),
 };
@@ -286,13 +286,13 @@ export const articlesApi = {
 export const kategoriUsahaApi = {
   getById: (id: number) =>
     publicClient
-      .get<T.ApiResponse<T.KategoriUsaha>>(`/kategori-usaha/${id}`)
+      .get<T.ApiResponse<T.BusinessCategory>>(`/kategori-usaha/${id}`)
       .then(res => res.data.data)
       .catch(e => handleError(e, `mengambil kategori usaha #${id}`)),
 
-  update: (id: number, data: {nama_kategori_usaha: string}) =>
+  update: (id: number, data: {name: string}) =>
     privateClient
-      .put<T.ApiResponse<T.KategoriUsaha>>(`/kategori-usaha/${id}`, data)
+      .put<T.ApiResponse<T.BusinessCategory>>(`/kategori-usaha/${id}`, data)
       .then(res => res.data)
       .catch(e => handleError(e, `memperbarui kategori usaha #${id}`)),
 

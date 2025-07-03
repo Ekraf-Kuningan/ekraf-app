@@ -87,14 +87,14 @@ export default function ProductEditScreen() {
                 ]);
 
                 // Mengisi state dengan data produk yang ada
-                setNamaPelaku(productData.nama_pelaku || '');
-                setNamaProduk(productData.nama_produk);
-                setNohp(productData.nohp || '');
-                setIdKategoriUsaha(productData.id_kategori_usaha);
-                setStok(String(productData.stok));
-                setHarga(String(productData.harga));
-                setDeskripsi(productData.deskripsi || '');
-                setFotoUrl(productData.gambar); // URL gambar yang sudah ada
+                setNamaPelaku(productData.owner_name || '');
+                setNamaProduk(productData.name);
+                setNohp(productData.phone_number || '');
+                setIdKategoriUsaha(productData.business_category_id);
+                setStok(String(productData.stock));
+                setHarga(String(productData.price));
+                setDeskripsi(productData.description || '');
+                setFotoUrl(productData.image); // URL gambar yang sudah ada
 
                 setBusinessCategories(fetchedCategories);
 
@@ -163,14 +163,14 @@ export default function ProductEditScreen() {
         setIsLoading(true);
 
         const productPayload: T.UpdateProductPayload = {
-            nama_produk: namaProduk,
-            nama_pelaku: namaPelaku,
-            id_kategori_usaha: idKategoriUsaha,
-            stok: parseInt(stok, 10) || 0,
-            harga: parseInt(harga, 10) || 0,
-            deskripsi: deskripsi,
-            nohp: nohp,
-            gambar: fotoUrl,
+            name: namaProduk,
+            owner_name: namaPelaku,
+            business_category_id: idKategoriUsaha,
+            stock: parseInt(stok, 10) || 0,
+            price: parseInt(harga, 10) || 0,
+            description: deskripsi,
+            phone_number: nohp,
+            image: fotoUrl,
         };
 
         try {
@@ -208,7 +208,7 @@ export default function ProductEditScreen() {
 
                     <Text className={labelStyle}>Kategori Produk</Text>
                     <CustomPicker
-                        items={businessCategories.map(cat => ({ label: cat.nama_kategori, value: cat.id_kategori_usaha }))}
+                        items={businessCategories.map(cat => ({ label: cat.name, value: cat.id }))}
                         selectedValue={idKategoriUsaha}
                         onValueChange={setIdKategoriUsaha}
                         placeholder={'Pilih kategori produk'}

@@ -81,8 +81,8 @@ export default function PendaftaranProdukScreen() {
 
                 setBusinessCategories(fetchedCategories);
 
-                if (userProfile && userProfile.nama_user) {
-                    setNamaPelaku(userProfile.nama_user);
+                if (userProfile && userProfile.name) {
+                    setNamaPelaku(userProfile.name);
                 }
             } catch (error: any) {
                 showPopup('error', 'Gagal Memuat Data', 'Tidak dapat mengambil data awal. Silakan coba lagi.');
@@ -151,14 +151,14 @@ export default function PendaftaranProdukScreen() {
         setIsLoading(true);
 
         const productPayload: ProductPayload = {
-            nama_produk: namaProduk,
-            nama_pelaku: namaPelaku,
-            id_kategori_usaha: idKategoriUsaha,
-            stok: parseInt(stok, 10) || 0,
-            harga: parseInt(harga, 10) || 0,
-            deskripsi: deskripsi,
-            nohp: nohp,
-            gambar: fotoUrl,
+            name: namaProduk,
+            owner_name: namaPelaku,
+            business_category_id: idKategoriUsaha,
+            stock: parseInt(stok, 10) || 0,
+            price: parseInt(harga, 10) || 0,
+            description: deskripsi,
+            phone_number: nohp,
+            image: fotoUrl,
         };
 
         try {
@@ -187,7 +187,7 @@ export default function PendaftaranProdukScreen() {
 
                     <Text className={labelStyle}>Kategori Produk</Text>
                     <CustomPicker
-                        items={businessCategories.map(cat => ({ label: cat.nama_kategori, value: cat.id_kategori_usaha }))}
+                        items={businessCategories.map(cat => ({ label: cat.name, value: cat.id }))}
                         selectedValue={idKategoriUsaha}
                         onValueChange={setIdKategoriUsaha}
                         placeholder={isLoadingData ? 'Memuat kategori...' : 'Pilih kategori produk'}

@@ -31,18 +31,24 @@ export interface UploaderResponse {
 // TIPE DATA - AUTH & USERS
 // ===================================
 export interface User {
-  id_user: number;
-  id_level: number;
-  nama_user: string | null;
-  jk: 'Laki-laki' | 'Perempuan';
-  nohp: string | null;
-  username: string;
-  email: string | null;
-  nama_usaha?: string;
-  status_usaha?: 'BARU' | 'SUDAH_LAMA';
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at?: string | null;
+  username?: string | null;
+  gender?: 'Laki-laki' | 'Perempuan' | null;
+  phone_number?: string | null;
+  image?: string | null;
+  business_name?: string | null;
+  business_status?: 'BARU' | 'SUDAH_LAMA' | null;
+  level_id: number;
+  business_category_id?: number | null;
   verifiedAt?: string | null;
-  tbl_level?: { id_level?: number; level: string; };
-  tbl_kategori_usaha?: KategoriUsaha | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  // Relations
+  levels?: { name: string; };
+  business_categories?: BusinessCategory | null;
   level?: string;
 }
 
@@ -53,15 +59,15 @@ export interface LoginResponse {
 }
 
 export interface RegistrationData {
-  nama_user: string;
+  name: string;
   username: string;
   email: string;
   password: string;
-  jk: 'Laki-laki' | 'Perempuan';
-  nohp: string;
-  nama_usaha?: string;
-  status_usaha?: 'BARU' | 'SUDAH_LAMA';
-  id_kategori_usaha?: string;
+  gender: 'Laki-laki' | 'Perempuan';
+  phone_number: string;
+  business_name?: string;
+  business_status?: 'BARU' | 'SUDAH_LAMA';
+  business_category_id?: string;
 }
 
 export interface RegisterResponse {
@@ -77,20 +83,25 @@ export interface ForgotPasswordResponse {
 // ===================================
 // TIPE DATA - MASTER DATA & KATEGORI
 // ===================================
-export interface KategoriUsaha {
-  id_kategori_usaha: number;
-  nama_kategori: string;
-  image: string;
+export interface BusinessCategory {
+  id: number;
+  name: string;
+  image?: string | null;
 }
 
-export interface TblLevel {
-    id_level: number;
-    level: string;
+export interface Level {
+  id: number;
+  name: string;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
-export interface Subsektor {
-    id_sub: number;
-    sub_sektor: string;
+export interface Subsector {
+  id: number;
+  title: string;
+  slug: string;
+  created_at?: string | null;
+  updated_at?: string | null;
 }
 
 
@@ -99,42 +110,45 @@ export interface Subsektor {
 // ===================================
 
 export interface Product {
-  id_produk: number;
-  nama_produk: string;
-  nama_pelaku: string;
-  deskripsi: string;
-  harga: number;
-  stok: number;
-  nohp: string | null;
-  id_kategori_usaha: number;
-  gambar: string;
-  id_user: number;
-  // TAMBAHKAN BARIS DI BAWAH INI
-  status_produk: 'disetujui' | 'pending' | 'ditolak' | 'tidak aktif';
-  tbl_kategori_usaha?: KategoriUsaha;
-  tbl_user?: { nama_user: string; };
-  tbl_olshop_link?: OlshopLink[];
+  id: number;
+  name: string;
+  owner_name?: string | null;
+  description: string;
+  price: number;
+  stock: number;
+  image: string;
+  phone_number: string;
+  uploaded_at?: string;
+  user_id?: number | null;
+  business_category_id?: number | null;
+  status: 'disetujui' | 'pending' | 'ditolak' | 'tidak aktif';
+  status_produk: 'disetujui' | 'pending' | 'ditolak' | 'tidak_aktif';
+  // Relations
+  business_categories?: BusinessCategory | null;
+  users?: User | null;
+  online_store_links?: TblOlshopLink[];
 }
 export interface ProductPayload {
-  nama_produk: string;
-  nama_pelaku: string;
-  deskripsi?: string;
-  harga: number; // tipe data number untuk JSON
-  stok: number;  // tipe data number untuk JSON
-  nohp?: string;
-  id_kategori_usaha: number;
-  gambar: string; // Tipe data string untuk URL gambar
+  name: string;
+  owner_name?: string;
+  description: string;
+  price: number;
+  stock: number;
+  phone_number: string;
+  business_category_id: number;
+  image: string;
 }
-export interface OlshopLink {
-    id_link: number;
-    nama_platform: string;
-    url: string;
-    id_produk: number;
+
+export interface TblOlshopLink {
+  id: number;
+  product_id: number;
+  platform_name?: string | null;
+  url: string;
 }
 
 export interface CreateOlshopLinkData {
-    nama_platform: string;
-    url: string;
+  platform_name: string;
+  url: string;
 }
 
 export type UpdateOlshopLinkData = Partial<CreateOlshopLinkData>;
@@ -144,23 +158,58 @@ export type UpdateProductPayload = Partial<ProductPayload>;
 // TIPE DATA - ARTICLES
 // ===================================
 export interface Article {
-  id_artikel: number;
-  judul: string;
-  deskripsi_singkat: string;
-  isi_lengkap: string;
-  gambar: string;
-  tbl_user: {
-    nama_user: string;
+  id: number;
+  author_id: number;
+  artikel_kategori_id: number;
+  title: string;
+  slug: string;
+  thumbnail: string;
+  content: string;
+  is_featured?: boolean;
+  created_at?: string | null;
+  updated_at?: string | null;
+  // Relations
+  users?: User;
+  author?: {
+    name: string;
     email: string;
   };
 }
 
 export interface CreateArticleData {
-  judul: string;
-  isi_lengkap: string;
-  id_user: number;
-  deskripsi_singkat?: string;
-  gambar?: string;
+  title: string;
+  content: string;
+  author_id: number;
+  artikel_kategori_id: number;
+  thumbnail?: string;
 }
 
-export type UpdateArticleData = Partial<Omit<CreateArticleData, 'id_user'>>;
+export type UpdateArticleData = Partial<Omit<CreateArticleData, 'author_id'>>;
+
+// ===================================
+// TIPE DATA - TEMPORARY USER
+// ===================================
+export interface TemporaryUser {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  gender: 'Laki-laki' | 'Perempuan';
+  phone_number?: string | null;
+  business_name?: string | null;
+  business_status?: 'BARU' | 'SUDAH_LAMA' | null;
+  level_id: number;
+  business_category_id?: number | null;
+  verificationToken: string;
+  verificationTokenExpiry?: string | null;
+  createdAt: string;
+}
+
+// ===================================
+// TIPE DATA - BACKWARD COMPATIBILITY
+// ===================================
+// Keep old interface names for backward compatibility
+export type KategoriUsaha = BusinessCategory;
+export type TblLevel = Level;
+export type Subsektor = Subsector;
+export type OlshopLink = TblOlshopLink;

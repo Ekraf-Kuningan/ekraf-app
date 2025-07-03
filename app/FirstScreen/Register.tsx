@@ -57,12 +57,12 @@ export default function Register({ navigation }: { navigation: any }) {
     setLoading(true);
     try {
       const response = await axios.post('https://ekraf.asepharyana.tech/api/auth/register/umkm', {
-        nama_user: namaUser,
+        name: namaUser,
         username: username,
         email: email,
         password: password,
-        jk: jk,
-        nohp: noHp,
+        gender: jk,
+        phone_number: noHp,
       });
 
       if (response.data.success) {

@@ -60,7 +60,7 @@ const DetailProdukModal = ({
             {/* Gambar Produk */}
             <View className="items-center mb-4">
               <Image
-                source={{ uri: produk.gambar }}
+                source={{ uri: produk.image }}
                 className={`w-48 h-48 rounded-2xl border-4 ${isDark ? 'border-gray-700' : 'border-gray-200'}`}
                 resizeMode="cover"
               />
@@ -74,7 +74,7 @@ const DetailProdukModal = ({
                   Nama Produk
                 </Text>
                 <Text className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-800'}`}>
-                  {produk.nama_produk}
+                  {produk.name}
                 </Text>
               </View>
 
@@ -84,7 +84,7 @@ const DetailProdukModal = ({
                   Kategori
                 </Text>
                 <Text className={`text-lg ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                  {produk.tbl_kategori_usaha?.nama_kategori || 'Tidak ada kategori'}
+                  {produk.business_categories?.name ?? 'Tidak ada kategori'}
                 </Text>
               </View>
 
@@ -94,7 +94,7 @@ const DetailProdukModal = ({
                   Harga
                 </Text>
                 <Text className={`text-3xl font-bold text-[#FFAA01]`}>
-                  Rp {produk.harga.toLocaleString('id-ID')}
+                  Rp {produk.price.toLocaleString('id-ID')}
                 </Text>
               </View>
 
@@ -104,7 +104,7 @@ const DetailProdukModal = ({
                   Stok
                 </Text>
                 <Text className={`text-lg ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                  {produk.stok} unit
+                  {produk.stock} unit
                 </Text>
               </View>
 
@@ -121,13 +121,13 @@ const DetailProdukModal = ({
               </View>
 
               {/* Deskripsi (jika ada) */}
-              {produk.deskripsi && (
+              {produk.description && (
                 <View>
                   <Text className={`text-sm font-medium mb-2 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
                     Deskripsi
                   </Text>
                   <Text className={`text-base leading-relaxed ${isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                    {produk.deskripsi}
+                    {produk.description}
                   </Text>
                 </View>
               )}
@@ -141,21 +141,21 @@ const DetailProdukModal = ({
                 <View className="space-y-2">
                   <View className="flex-row justify-between">
                     <Text className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>ID Produk</Text>
-                    <Text className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>#{produk.id_produk}</Text>
+                    <Text className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>#{produk.id}</Text>
                   </View>
                   
                   <View className="flex-row justify-between">
                     <Text className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>Nama Pelaku</Text>
                     <Text className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>
-                      {produk.nama_pelaku}
+                      {produk.owner_name}
                     </Text>
                   </View>
 
-                  {produk.nohp && (
+                  {produk.phone_number && (
                     <View className="flex-row justify-between">
                       <Text className={`${isDark ? 'text-gray-300' : 'text-gray-600'}`}>No. HP</Text>
                       <Text className={`font-medium ${isDark ? 'text-white' : 'text-gray-800'}`}>
-                        {produk.nohp}
+                        {produk.phone_number}
                       </Text>
                     </View>
                   )}

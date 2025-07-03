@@ -52,7 +52,7 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
     setLoading(true);
     try {
       const user = await usersApi.getOwnProfile();
-      const data = await usersApi.getProducts(user.id_user);
+      const data = await usersApi.getProducts(user.id);
       setProduk(data || []);
     } catch (e) {
       setProduk([]);
@@ -79,7 +79,7 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
   };
 
   const handleDetail = (productId: number) => {
-    const product = produk.find(p => p.id_produk === productId);
+    const product = produk.find(p => p.id === productId);
     if (product) {
       setSelectedProduct(product);
       setShowDetailModal(true);
@@ -122,7 +122,7 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
         ) : (
           filteredProduk.map((item) => (
             <View
-              key={item.id_produk}
+              key={item.id}
               className={`flex-row items-center mb-4 p-3 rounded-2xl shadow-lg border ${isDark
                   ? 'bg-[#232323] border-gray-800'
                   : 'bg-white border-gray-100'
@@ -130,47 +130,47 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
               style={{ elevation: 4 }}
             >
               <Image
-                source={{ uri: item.gambar }}
+                source={{ uri: item.image }}
                 className={`w-20 h-20 rounded-xl mr-4 border ${isDark ? 'border-gray-700' : 'border-gray-200'}`}
                 resizeMode="cover"
               />
               <View className="flex-1">
-                <Text className={`font-bold text-lg mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{item.nama_produk}</Text>
+                <Text className={`font-bold text-lg mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{item.name}</Text>
                 <Text className={`text-xs mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {item.tbl_kategori_usaha?.nama_kategori || 'Kategori tidak tersedia'}
+                  {item.business_categories?.name || 'Kategori tidak tersedia'}
                 </Text>
-                <Text className={`text-base font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Rp{item.harga.toLocaleString('id-ID')}</Text>
-                <Text className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Stok: {item.stok}</Text>
+                <Text className={`text-base font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Rp{item.price.toLocaleString('id-ID')}</Text>
+                <Text className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Stok: {item.stock}</Text>
                 <Text
-                  className={`text-xs mt-2 px-2 py-1 rounded-full w-fit font-semibold ${item.status_produk === 'disetujui'
+                  className={`text-xs mt-2 px-2 py-1 rounded-full w-fit font-semibold ${item.status === 'disetujui'
                       ? isDark
                         ? 'bg-green-900 text-green-200'
                         : 'bg-green-100 text-green-700'
-                      : item.status_produk === 'ditolak'
+                      : item.status === 'ditolak'
                         ? isDark
                           ? 'bg-red-900 text-red-200'
                           : 'bg-red-100 text-red-700'
-                        : item.status_produk === 'pending'
+                        : item.status === 'pending'
                           ? isDark
                             ? 'bg-yellow-900 text-yellow-200'
                             : 'bg-yellow-100 text-yellow-700'
-                          : item.status_produk === 'tidak aktif'
+                          : item.status === 'tidak aktif'
                             ? isDark
                               ? 'bg-gray-800 text-gray-300'
                               : 'bg-gray-200 text-gray-700'
                             : ''
                     }`}
                 >
-                  {item.status_produk.charAt(0).toUpperCase() + item.status_produk.slice(1)}
+                  {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                 </Text>
                 <View className='flex-row mt-2 mx-2 space-x-2'>
-                  <TouchableOpacity onPress={() => handleEdit(item.id_produk)}>
+                  <TouchableOpacity onPress={() => handleEdit(item.id)}>
                     <Text className="text-xs text-[#FFAA01] mr-2">Edit</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDeletePress(item.id_produk)}>
+                  <TouchableOpacity onPress={() => handleDeletePress(item.id)}>
                     <Text className="text-xs text-red-500">Hapus</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDetail(item.id_produk)}>
+                  <TouchableOpacity onPress={() => handleDetail(item.id)}>
                     <Text className="text-xs text-blue-500 mx-2">Detail</Text>
                   </TouchableOpacity>
                 </View>

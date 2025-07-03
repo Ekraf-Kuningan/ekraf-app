@@ -72,7 +72,7 @@ export default function Dashboard() {
 
       const [fetchedCategories, fetchedProducts] = await Promise.all([
         masterDataApi.getBusinessCategories(),
-        usersApi.getProducts(loggedInUser.id_user),
+        usersApi.getProducts(loggedInUser.id),
       ]);
 
       setCategories(fetchedCategories);
@@ -81,7 +81,7 @@ export default function Dashboard() {
       const active = fetchedProducts.filter(p => p.status_produk === 'disetujui').length;
       const pending = fetchedProducts.filter(p => p.status_produk === 'pending').length;
       const inactive = fetchedProducts.filter(
-        p => p.status_produk === 'ditolak' || p.status_produk === 'tidak aktif',
+        p => p.status === 'ditolak' || p.status === 'tidak aktif',
       ).length;
       setStats({active, pending, inactive});
     } catch (err: any) {
@@ -99,7 +99,7 @@ export default function Dashboard() {
     if (selectedCategoryId === null) {
       return products;
     }
-    return products.filter(p => p.id_kategori_usaha === selectedCategoryId);
+    return products.filter(p => p.business_category_id === selectedCategoryId);
   }, [products, selectedCategoryId]);
 
   // Handler untuk memilih kategori
@@ -156,7 +156,7 @@ export default function Dashboard() {
         <Animatable.View animation="fadeInUp" duration={700} useNativeDriver>
           <View className="px-4 mt-4">
             <View className="rounded-xl p-5 mb-4" style={{backgroundColor: primaryColor}}>
-              <Text className="text-white text-base font-medium">Selamat datang {user?.nama_user || 'Pengguna'},</Text>
+              <Text className="text-white text-base font-medium">Selamat datang {user?.name ?? 'Pengguna'},</Text>
               <Text className="text-white text-base mb-4">kelola aktivitas anda dibawah</Text>
               <View className="flex-row justify-between">
                 <View className="flex-1 bg-[#fff2d6] rounded-xl items-center py-4 mx-1">
@@ -198,11 +198,11 @@ export default function Dashboard() {
 
               {/* Daftar Kategori dari API */}
               {categories.map((item) => {
-                const isSelected = selectedCategoryId === item.id_kategori_usaha;
+                const isSelected = selectedCategoryId === item.id;
                 return (
                   <TouchableOpacity
-                    key={item.id_kategori_usaha}
-                    onPress={() => handleSelectCategory(item.id_kategori_usaha)}
+                    key={item.id}
+                    onPress={() => handleSelectCategory(item.id)}
                     className="items-center mr-4">
                     <View className={`w-24 h-24 rounded-xl items-center justify-center mb-1
                       ${isSelected ? 'border-2 border-orange-500' : ''}
@@ -213,7 +213,7 @@ export default function Dashboard() {
                     </View>
                     <Text className={`text-xs text-center font-medium w-24 
                       ${isSelected ? 'text-orange-500 font-bold' : isDark ? 'text-gray-200' : 'text-gray-700'}`}>
-                      {item.nama_kategori}
+                      {item.name}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -228,7 +228,7 @@ export default function Dashboard() {
             <Text className={`text-base font-bold mb-2 ${isDark ? 'text-white' : 'text-black'}`}>Produk Saya</Text>
             <FlatList
               data={filteredProducts}
-              keyExtractor={item => item.id_produk.toString()}
+              keyExtractor={item => item.id.toString()}
               numColumns={2}
               columnWrapperClassName="justify-between"
               scrollEnabled={false}
@@ -237,23 +237,23 @@ export default function Dashboard() {
                   animation="zoomInUp" delay={index * 80} duration={700} easing="ease-out-cubic" useNativeDriver
                   className={`flex-1 max-w-[48.5%] rounded-xl mb-4 shadow-md shadow-black/10
                     ${isDark ? 'bg-[#1f1f1f] border border-zinc-700' : 'bg-white'}`}>
-                  <Image source={item.gambar ? {uri: item.gambar} : require('../../assets/images/ekraf.png')}
+                  <Image source={item.image ? {uri: item.image} : require('../../assets/images/ekraf.png')}
                     className="w-full h-32 rounded-t-xl" resizeMode="cover"
                   />
                   <View className="p-2">
                     <Text className={`text-sm font-bold mb-1 ${isDark ? 'text-gray-200' : 'text-gray-800'}`} numberOfLines={1}>
-                      {item.nama_produk}
+                      {item.name}
                     </Text>
                     <View className="flex-row mb-1">
-                      <TouchableOpacity onPress={() => navigation.navigate('ProductEdit', {id: item.id_produk})}>
+                      <TouchableOpacity onPress={() => navigation.navigate('ProductEdit', {id: item.id})}>
                         <Text className="text-xs text-[#FFAA01] mr-2">Edit</Text>
                       </TouchableOpacity>
-                      <TouchableOpacity onPress={() => handleDelete(item.id_produk)}>
+                      <TouchableOpacity onPress={() => handleDelete(item.id)}>
                         <Text className="text-xs text-red-500">Hapus</Text>
                       </TouchableOpacity>
                     </View>
                     <Text className={`text-base font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      {formatRupiah(Number(item.harga))}
+                      {formatRupiah(Number(item.price))}
                     </Text>
                   </View>
                 </Animatable.View>

@@ -99,15 +99,15 @@ export default function Register({ navigation }: { navigation: any }) {
     setIsLoading(true);
 
     const registrationData: RegistrationData = {
-      nama_user,
+      name: nama_user,
       username,
       email,
       password,
-      jk: jk!,
-      nohp,
-      nama_usaha,
-      status_usaha: status_usaha!,
-      id_kategori_usaha: String(id_kategori_usaha),
+      gender: jk!,
+      phone_number: nohp,
+      business_name: nama_usaha,
+      business_status: status_usaha!,
+      business_category_id: String(id_kategori_usaha),
     };
 
     try {
@@ -240,8 +240,8 @@ export default function Register({ navigation }: { navigation: any }) {
           <Text className={`text-sm font-poppins-medium mb-1 ml-1 ${labelColor}`}>Kategori Usaha</Text>
           <CustomPicker
             items={businessCategories.map(category => ({
-              label: category.nama_kategori,
-              value: category.id_kategori_usaha,
+              label: category.name,
+              value: category.id,
             }))}
             selectedValue={id_kategori_usaha}
             onValueChange={setIdKategoriUsaha}
