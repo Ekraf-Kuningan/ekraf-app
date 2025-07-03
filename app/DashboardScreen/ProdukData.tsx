@@ -3,6 +3,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { productsApi } from '../../lib/api';
 import { Product } from '../../lib/types';
+import { masterDataApi } from '../../lib/api';
+
 import { usersApi } from '../../lib/api';
 import PopUpConfirm from '../../components/PopUpConfirm';
 import DetailProdukModal from '../../components/DetailProdukModal';
@@ -42,6 +44,8 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
     setShowDeleteConfirm(false);
     setSelectedProductId(null);
   };
+  
+  
 
   // Fungsi fetchProduk dipisah agar bisa dipanggil ulang
   const fetchProduk = useCallback(async () => {
@@ -132,7 +136,9 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
               />
               <View className="flex-1">
                 <Text className={`font-bold text-lg mb-1 ${isDark ? 'text-white' : 'text-black'}`}>{item.nama_produk}</Text>
-                <Text className={`text-xs mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>{item.tbl_kategori_usaha?.nama_kategori || '-'}</Text>
+                <Text className={`text-xs mb-1 ${isDark ? 'text-gray-300' : 'text-gray-600'}`}>
+                  {item.tbl_kategori_usaha?.nama_kategori || 'Kategori tidak tersedia'}
+                </Text>
                 <Text className={`text-base font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>Rp{item.harga.toLocaleString('id-ID')}</Text>
                 <Text className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Stok: {item.stok}</Text>
                 <Text

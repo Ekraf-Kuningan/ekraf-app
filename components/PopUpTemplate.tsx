@@ -22,9 +22,7 @@ const themeConfig = {
   },
 };
 
-// Karena NativeWind/TailwindCSS tidak bisa membuat class secara dinamis (cth: `bg-${warna}`),
-// kita perlu mendefinisikan nama class lengkap agar bisa dideteksi saat build.
-// Ini adalah pattern yang umum digunakan.
+
 const colorMap: Record<string, string> = {
     'bg-yellow-400': 'bg-[#F2A307]',
     'text-yellow-400': 'text-[#F2A307]',
