@@ -18,7 +18,7 @@ import {
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { useNavigation, useRoute, RouteProp, NavigationProp } from '@react-navigation/native';
 
-import { masterDataApi, productsApi, uploaderApi } from '../../lib/api';
+import { masterDataApi, productApi, uploaderApi } from '../../lib/api';
 import type * as T from '../../lib/types';
 import { CustomPicker } from '../../components/CustomPicker';
 import PopupTemplate from '../../components/PopUpTemplate';
@@ -27,7 +27,7 @@ import { useTheme } from '../Context/ThemeContext';
 // --- Tipe untuk Navigasi ---
 type RootStackParamList = {
     MainApp: object | undefined;
-    ProductEdit: { id: number };
+    ProductEdit: { id: string };
 };
 type ProductEditScreenRouteProp = RouteProp<RootStackParamList, 'ProductEdit'>;
 type ProductEditNavigationProp = NavigationProp<RootStackParamList>;
@@ -53,14 +53,14 @@ export default function ProductEditScreen() {
     const [namaPelaku, setNamaPelaku] = useState('');
     const [namaProduk, setNamaProduk] = useState('');
     const [nohp, setNohp] = useState('');
-    const [idKategoriUsaha, setIdKategoriUsaha] = useState<number | null>(null);
+    const [idKategoriUsaha, setIdKategoriUsaha] = useState<string | null>(null);
     const [stok, setStok] = useState('');
     const [harga, setHarga] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [fotoUrl, setFotoUrl] = useState<string | null>(null);
 
     const [isUploading, setIsUploading] = useState(false);
-    const [businessCategories, setBusinessCategories] = useState<T.KategoriUsaha[]>([]);
+    const [businessCategories, setBusinessCategories] = useState<T.BusinessCategory[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [popup, setPopup] = useState({
@@ -82,7 +82,7 @@ export default function ProductEditScreen() {
         const loadInitialData = async () => {
             try {
                 const [productData, fetchedCategories] = await Promise.all([
-                    productsApi.getById(productId),
+                    productApi.getProductById(productId),
                     masterDataApi.getBusinessCategories(),
                 ]);
 
@@ -90,7 +90,7 @@ export default function ProductEditScreen() {
                 setNamaPelaku(productData.owner_name || '');
                 setNamaProduk(productData.name);
                 setNohp(productData.phone_number || '');
-                setIdKategoriUsaha(productData.business_category_id);
+                setIdKategoriUsaha(productData.business_category_id ?? null);
                 setStok(String(productData.stock));
                 setHarga(String(productData.price));
                 setDeskripsi(productData.description || '');
@@ -174,7 +174,7 @@ export default function ProductEditScreen() {
         };
 
         try {
-            await productsApi.update(productId, productPayload);
+            await productApi.updateProduct(productId, productPayload);
             showPopup('success', 'Berhasil!', 'Produk Anda telah berhasil diperbarui.', 'Selesai', () => navigation.navigate('MainApp', { screen: 'Dashboard' }));
         } catch (error: any) {
             showPopup('error', 'Gagal Memperbarui', error.message);

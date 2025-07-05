@@ -66,9 +66,8 @@ export default function Login({ navigation }: { navigation: any }) {
 
     setLoading(true);
     try {
-      // Panggil fungsi login dari objek authApi
-      // Level 'umkm' sudah menjadi default di fungsi API, jadi tidak perlu disertakan
-      const { message } = await authApi.login({ u: email, p: password });
+      // Panggil fungsi loginLegacy dari objek authApi untuk backward compatibility
+      const { message } = await authApi.loginLegacy({ u: email, p: password });
 
       showPopup(
         'success',

@@ -19,12 +19,12 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StackNavigationProp} from '@react-navigation/stack';
 import type * as T from '../../lib/types';
-import {masterDataApi, usersApi, productsApi} from '../../lib/api';
+import {masterDataApi, userApi, productApi} from '../../lib/api';
 
 const primaryColor = '#FFAA01';
 
 type DashboardNavProp = StackNavigationProp<{
-  ProductEdit: {id: number};
+  ProductEdit: {id: string};
 }>;
 
 // -- BARU: Komponen dipindahkan ke luar dari `Dashboard` untuk stabilitas --
@@ -56,7 +56,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   // Fungsi Fetch Data
   const fetchData = useCallback(async () => {
@@ -72,7 +72,7 @@ export default function Dashboard() {
 
       const [fetchedCategories, fetchedProducts] = await Promise.all([
         masterDataApi.getBusinessCategories(),
-        usersApi.getProducts(loggedInUser.id),
+        userApi.getUserProducts(loggedInUser.id),
       ]);
 
       setCategories(fetchedCategories);
@@ -81,7 +81,7 @@ export default function Dashboard() {
       const active = fetchedProducts.filter(p => p.status_produk === 'disetujui').length;
       const pending = fetchedProducts.filter(p => p.status_produk === 'pending').length;
       const inactive = fetchedProducts.filter(
-        p => p.status === 'ditolak' || p.status === 'tidak aktif',
+        p => p.status === 'ditolak' || p.status === 'tidak_aktif',
       ).length;
       setStats({active, pending, inactive});
     } catch (err: any) {
@@ -103,12 +103,12 @@ export default function Dashboard() {
   }, [products, selectedCategoryId]);
 
   // Handler untuk memilih kategori
-  const handleSelectCategory = (categoryId: number | null) => {
+  const handleSelectCategory = (categoryId: string | null) => {
     setSelectedCategoryId(categoryId);
   };
 
   // Fungsi lain
-  const handleDelete = (productId: number) => {
+  const handleDelete = (productId: string) => {
     Alert.alert('Hapus Produk', 'Yakin ingin menghapus produk ini?', [
         {text: 'Batal', style: 'cancel'},
         {
@@ -116,7 +116,7 @@ export default function Dashboard() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await productsApi.delete(productId);
+              await productApi.deleteProduct(productId);
               Alert.alert('Sukses', 'Produk berhasil dihapus.');
               fetchData();
             } catch (err: any) {

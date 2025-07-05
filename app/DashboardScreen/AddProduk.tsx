@@ -18,8 +18,8 @@ import {
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 
 // Impor semua API dan Tipe yang dibutuhkan
-import { masterDataApi, productsApi, uploaderApi, usersApi } from '../../lib/api';
-import { KategoriUsaha, ProductPayload } from '../../lib/types';
+import { masterDataApi, productApi, uploaderApi, userApi } from '../../lib/api';
+import { BusinessCategory, ProductCreateRequest } from '../../lib/types';
 import { CustomPicker } from '../../components/CustomPicker';
 import PopupTemplate from '../../components/PopUpTemplate';
 import { useTheme } from '../Context/ThemeContext';
@@ -48,13 +48,13 @@ export default function PendaftaranProdukScreen() {
     const [namaPelaku, setNamaPelaku] = useState('');
     const [namaProduk, setNamaProduk] = useState('');
     const [nohp, setNohp] = useState('');
-    const [idKategoriUsaha, setIdKategoriUsaha] = useState<number | null>(null);
+    const [idKategoriUsaha, setIdKategoriUsaha] = useState<string | null>(null);
     const [stok, setStok] = useState('');
     const [harga, setHarga] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [fotoUrl, setFotoUrl] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
-    const [businessCategories, setBusinessCategories] = useState<KategoriUsaha[]>([]);
+    const [businessCategories, setBusinessCategories] = useState<BusinessCategory[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [popup, setPopup] = useState({
@@ -76,15 +76,16 @@ export default function PendaftaranProdukScreen() {
             try {
                 const [fetchedCategories, userProfile] = await Promise.all([
                     masterDataApi.getBusinessCategories(),
-                    usersApi.getOwnProfile(),
+                    userApi.getProfile(),
                 ]);
 
                 setBusinessCategories(fetchedCategories);
 
-                if (userProfile && userProfile.name) {
+                if (userProfile?.name) {
                     setNamaPelaku(userProfile.name);
                 }
             } catch (error: any) {
+                console.error('Error loading initial data:', error);
                 showPopup('error', 'Gagal Memuat Data', 'Tidak dapat mengambil data awal. Silakan coba lagi.');
             } finally {
                 setIsLoadingData(false);
@@ -108,9 +109,9 @@ export default function PendaftaranProdukScreen() {
 
         const action = type === 'camera' ? launchCamera : launchImageLibrary;
         action({ mediaType: 'photo', quality: 0.7 }, async (response) => {
-            if (response.didCancel || !response.assets || !response.assets[0]) {return;}
+            if (response.didCancel || !response.assets?.[0]) {return;}
             if (response.errorCode) {
-                showPopup('error', 'Error', response.errorMessage || `Gagal membuka ${type}.`);
+                showPopup('error', 'Error', response.errorMessage ?? `Gagal membuka ${type}.`);
                 return;
             }
 
@@ -138,7 +139,11 @@ export default function PendaftaranProdukScreen() {
                 if (buttonIndex === 2) { handlePickImage('gallery')(); }
             });
         } else {
-            Alert.alert('Pilih Sumber Foto', '', [{ text: 'Kamera', onPress: handlePickImage('camera') }, { text: 'Galeri', onPress: handlePickImage('gallery') }, { text: 'Batal', style: 'cancel' }]);
+            Alert.alert('Pilih Sumber Foto', '', [
+                { text: 'Kamera', onPress: () => { handlePickImage('camera')(); } },
+                { text: 'Galeri', onPress: () => { handlePickImage('gallery')(); } },
+                { text: 'Batal', style: 'cancel' },
+            ]);
         }
     };
 
@@ -150,19 +155,19 @@ export default function PendaftaranProdukScreen() {
 
         setIsLoading(true);
 
-        const productPayload: ProductPayload = {
+        const productPayload: ProductCreateRequest = {
             name: namaProduk,
             owner_name: namaPelaku,
-            business_category_id: idKategoriUsaha,
-            stock: parseInt(stok, 10) || 0,
-            price: parseInt(harga, 10) || 0,
             description: deskripsi,
-            phone_number: nohp,
+            price: parseInt(harga, 10) || 0,
+            stock: parseInt(stok, 10) || 0,
             image: fotoUrl,
+            phone_number: nohp,
+            business_category_id: idKategoriUsaha,
         };
 
         try {
-            await productsApi.create(productPayload);
+            await productApi.createProduct(productPayload);
             showPopup('success', 'Berhasil!', 'Produk Anda telah berhasil didaftarkan.', 'Selesai', () => navigation.navigate('Dashboard'));
         } catch (error: any) {
             showPopup('error', 'Gagal Menyimpan', error.message);

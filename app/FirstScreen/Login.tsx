@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, StatusBar, useColorScheme, Platform, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios'; // Import axios
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import { authApi } from '../../lib/api'; // Use our API client instead of axios
 
 const primaryColor = '#FFAA01';
 const lightTextColor = '#000000';
@@ -42,28 +41,19 @@ const iconColor = isDarkMode ? '#FFFFFF' : '#757575';
 
     setLoading(true); // Aktifkan loading
     try {
-      // Sesuaikan URL dengan endpoint login UMKM Anda
-      const response = await axios.post('https://ekraf.asepharyana.tech/api/auth/login/umkm', {
-        usernameOrEmail: email, // API Anda menerima usernameOrEmail
+      // Use our API client instead of direct axios calls
+      const response = await authApi.login('umkm', {
+        usernameOrEmail: email,
         password: password,
       });
 
-      if (response.status === 200) {
-        const { message, token, user } = response.data;
-        await AsyncStorage.setItem('userToken', token); // Simpan token
-        await AsyncStorage.setItem('userData', JSON.stringify(user)); // Simpan data user jika diperlukan
-        Alert.alert('Sukses', message);
-
-        navigation.replace('NavigationBottom'); // Ganti layar ke halaman utama setelah login
-      } else {
-        // Ini mungkin tidak akan terpanggil karena axios akan throw error untuk status non-2xx
-        Alert.alert('Login Gagal', response.data.message || 'Terjadi kesalahan saat login.');
-      }
+      Alert.alert('Sukses', response.message || 'Login berhasil!');
+      navigation.replace('NavigationBottom'); // Ganti layar ke halaman utama setelah login
     } catch (error: any) {
-      console.error('Login error:', error.response?.data || error.message);
+      console.error('Login error:', error.message);
       Alert.alert(
         'Login Gagal',
-        error.response?.data?.message || 'Tidak dapat terhubung ke server. Mohon coba lagi.'
+        error.message || 'Tidak dapat terhubung ke server. Mohon coba lagi.'
       );
     } finally {
       setLoading(false);

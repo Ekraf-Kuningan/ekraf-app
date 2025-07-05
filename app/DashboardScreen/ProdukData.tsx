@@ -1,15 +1,12 @@
-import { Text, StatusBar, SafeAreaView, View, Image, ScrollView, TouchableOpacity,Alert } from 'react-native';
+import { Text, StatusBar, SafeAreaView, View, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { productsApi } from '../../lib/api';
+import { productApi, userApi } from '../../lib/api';
 import { Product } from '../../lib/types';
-import { masterDataApi } from '../../lib/api';
-
-import { usersApi } from '../../lib/api';
 import PopUpConfirm from '../../components/PopUpConfirm';
 import DetailProdukModal from '../../components/DetailProdukModal';
 
-const statusList = ['Semua', 'pending', 'disetujui', 'ditolak', 'tidak aktif'];
+const statusList = ['Semua', 'pending', 'disetujui', 'ditolak', 'tidak_aktif'];
 
 export default function ProdukData({ isDark }: { isDark: boolean }) {
   const navigation = useNavigation();
@@ -17,11 +14,11 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
   const [produk, setProduk] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  const handleDeletePress = (productId: number) => {
+  const handleDeletePress = (productId: string) => {
     setSelectedProductId(productId);
     setShowDeleteConfirm(true);
   };
@@ -29,7 +26,7 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
   const handleConfirmDelete = async () => {
     if (selectedProductId) {
       try {
-        await productsApi.delete(selectedProductId);
+        await productApi.deleteProduct(selectedProductId);
         Alert.alert('Sukses', 'Produk berhasil dihapus.');
         fetchProduk();
       } catch (err: any) {
@@ -51,8 +48,8 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
   const fetchProduk = useCallback(async () => {
     setLoading(true);
     try {
-      const user = await usersApi.getOwnProfile();
-      const data = await usersApi.getProducts(user.id);
+      const user = await userApi.getProfile();
+      const data = await userApi.getUserProducts(user.id);
       setProduk(data || []);
     } catch (e) {
       setProduk([]);
@@ -73,12 +70,12 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
     }, [fetchProduk])
   );
 
-  const handleEdit = (productId: number) => {
+  const handleEdit = (productId: string) => {
     // Navigasi ke halaman edit produk
     (navigation as any).navigate('ProductEdit', { id: productId });
   };
 
-  const handleDetail = (productId: number) => {
+  const handleDetail = (productId: string) => {
     const product = produk.find(p => p.id === productId);
     if (product) {
       setSelectedProduct(product);
@@ -154,7 +151,7 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
                           ? isDark
                             ? 'bg-yellow-900 text-yellow-200'
                             : 'bg-yellow-100 text-yellow-700'
-                          : item.status === 'tidak aktif'
+                          : item.status === 'tidak_aktif'
                             ? isDark
                               ? 'bg-gray-800 text-gray-300'
                               : 'bg-gray-200 text-gray-700'
