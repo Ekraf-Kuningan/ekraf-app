@@ -195,6 +195,8 @@ function AppContent() {
             headerTitleStyle: { color: isDark ? '#fff' : '#18181b' },
             headerRight: renderHeaderRight,
             headerShadowVisible: false,
+            headerLeft: () => null, // Menyembunyikan tombol back
+            gestureEnabled: false, // Menonaktifkan gesture swipe back
           })}
         />
         <Stack.Screen

@@ -74,7 +74,10 @@ export default function Login({ navigation }: { navigation: any }) {
         'Login Berhasil',
         message || 'Anda akan diarahkan ke halaman utama.',
         'Lanjutkan',
-        () => navigation.replace('MainApp') // Pastikan nama navigator sudah benar
+        () => navigation.reset({
+          index: 0,
+          routes: [{ name: 'MainApp' }],
+        })
       );
     } catch (error: any) {
       // Tangkap error yang dilemparkan dari fungsi API

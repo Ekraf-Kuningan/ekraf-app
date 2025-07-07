@@ -61,16 +61,25 @@ export default function SplashScreen() { // navigation prop tidak perlu di-destr
           const userData = await AsyncStorage.getItem('userData');
 
           if (userToken && userData) {
-            // Token ditemukan, pengguna sudah login. Arahkan ke NavigationBottom.
-            navigation.replace('MainApp');
+            // Token ditemukan, pengguna sudah login. Arahkan ke MainApp.
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'MainApp' }],
+            });
           } else {
             // Token tidak ditemukan, pengguna belum login. Arahkan ke Login.
-            navigation.replace('Login');
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Login' }],
+            });
           }
         } catch (e) {
           console.error('Gagal memuat token dari penyimpanan:', e);
           // Jika ada error, tetap arahkan ke Login sebagai fallback
-          navigation.replace('Login');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          });
         }
       };
 
