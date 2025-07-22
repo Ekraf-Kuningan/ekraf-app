@@ -1,12 +1,10 @@
 import { Text, StatusBar, SafeAreaView, View, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { productApi, userApi } from '../../lib/api';
+import { productApi, userApi, masterDataApi } from '../../lib/api';
 import { Product } from '../../lib/types';
 import PopUpConfirm from '../../components/PopUpConfirm';
 import DetailProdukModal from '../../components/DetailProdukModal';
-
-const statusList = ['Semua', 'pending', 'disetujui', 'ditolak', 'tidak_aktif'];
 
 export default function ProdukData({ isDark }: { isDark: boolean }) {
   const navigation = useNavigation();
@@ -17,6 +15,7 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [statusList, setStatusList] = useState<string[]>(['Semua']);
 
   const handleDeletePress = (productId: string) => {
     setSelectedProductId(productId);
@@ -58,10 +57,25 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
     }
   }, []);
 
+  // Fungsi untuk mengambil status produk dari database
+  const fetchStatusList = useCallback(async () => {
+    try {
+      console.log('Fetching product statuses from API...');
+      const statuses = await masterDataApi.getProductStatuses();
+      console.log('Received statuses:', statuses);
+      setStatusList(['Semua', ...statuses]);
+    } catch (error) {
+      console.error('Error fetching status list:', error);
+      // Fallback ke status hardcoded
+      setStatusList(['Semua', 'pending', 'disetujui', 'ditolak', 'tidak_aktif']);
+    }
+  }, []);
+
   // Fetch pertama kali saat mount
   useEffect(() => {
     fetchProduk();
-  }, [fetchProduk]);
+    fetchStatusList();
+  }, [fetchProduk, fetchStatusList]);
 
   // Fetch ulang setiap kali screen ProdukData difokuskan (navigasi balik dari AddProduk)
   useFocusEffect(
@@ -90,7 +104,7 @@ export default function ProdukData({ isDark }: { isDark: boolean }) {
 
   const filteredProduk = filterStatus === 'Semua'
     ? produk
-    : produk.filter(p => p.status_produk === filterStatus);
+    : produk.filter(p => p.status === filterStatus);
 
   return (
     <SafeAreaView className={`flex-1 ${isDark ? 'bg-black' : 'bg-white'}`}>

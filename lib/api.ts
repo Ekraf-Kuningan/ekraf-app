@@ -426,6 +426,7 @@ export const productApi = {
       return handleError(error, `memperbarui link #${linkId}`);
     }
   },
+
 };
 
 // ===================================
@@ -638,6 +639,35 @@ export const masterDataApi = {
       return response.data;
     } catch (error) {
       return handleError(error, 'mengambil subsektor');
+    }
+  },
+
+  // Get product statuses from database
+  async getProductStatuses(): Promise<string[]> {
+    try {
+      // Mencoba mendapatkan distinct status dari database
+      const response = await publicClient.get('/products/statuses');
+      const responseData = (response as any).data;
+      if (responseData && responseData.data && Array.isArray(responseData.data)) {
+        return responseData.data;
+      }
+      
+      // Jika endpoint khusus tidak tersedia, coba ambil dari endpoint products umum
+      const productsResponse = await publicClient.get('/products?limit=100');
+      const productsData = (productsResponse as any).data;
+      
+      if (productsData && productsData.data && Array.isArray(productsData.data)) {
+        // Ambil unique status dari data produk
+        const statuses = [...new Set(productsData.data.map((product: any) => product.status).filter(Boolean))] as string[];
+        return statuses;
+      }
+      
+      // Jika masih tidak berhasil, fallback
+      throw new Error('Response structure tidak sesuai');
+    } catch (error) {
+      // Fallback ke status hardcoded berdasarkan database yang terlihat
+      console.warn('API product statuses belum tersedia, menggunakan fallback');
+      return ['pending', 'disetujui', 'ditolak', 'tidak_aktif'];
     }
   },
 
