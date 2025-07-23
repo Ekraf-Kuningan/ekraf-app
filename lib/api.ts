@@ -63,7 +63,7 @@ import { Asset } from 'react-native-image-picker';
 
 // Base configuration
 const BASE_URL = 'https://ekraf.asepharyana.tech/api';
-const UPLOADER_URL = 'https://apidl.asepharyana.cloud/api/uploader/ryzencdn';
+const UPLOADER_URL = 'https://apidl.asepharyana.tech/api/uploader/ryzencdn';
 
 // Storage key for auth token
 const AUTH_TOKEN_KEY = 'userToken';
